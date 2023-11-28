@@ -1,0 +1,142 @@
+---
+title: "EDA"
+author: "Ruiqi Xue"
+date: "2023-11-27"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(purrr)
+library(dplyr)
+```
+
+
+```{r}
+prevalence_df = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
+  janitor::clean_names() |>
+  select(year, state_abbr, category, measure, data_value, total_population, category_id, measure_id, short_question_text) |>
+  filter(year == 2021)
+
+prevalence_outcome = prevalence_df |>
+  filter(category == "Health Outcomes")
+  
+prevalence_chol = prevalence_outcome |>
+  filter(measure_id == "HIGHCHOL") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(chol_pre_2021 = disease_popu / total_popu) |>
+  select(-disease_popu)
+  
+  
+```
+
+
+```{r}
+prevalence_risk = prevalence_df |>
+  filter(category == "Health Risk Behaviors")
+  
+
+risk_lpa = prevalence_risk |>
+  filter(measure_id == "LPA") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(lpa_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+risk_binge = prevalence_risk |>
+  filter(measure_id == "BINGE") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(binge_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+risk_smoking = prevalence_risk |>
+  filter(measure_id == "CSMOKING") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(smoking_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+```
+
+
+```{r}
+prevalence_prevention = prevalence_df |>
+  filter(category == "Prevention")
+
+prevention_insurance = prevalence_prevention |>
+  filter(measure_id == "ACCESS2") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(insurance_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+prevention_cholscreen = prevalence_prevention |>
+  filter(measure_id == "CHOLSCREEN") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(cholscreen_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+```
+
+```{r}
+prevalence_df_2020 = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
+  janitor::clean_names() |>
+  select(year, state_abbr, category, measure, data_value, total_population, category_id, measure_id, short_question_text) |>
+  filter(year == 2020)
+
+risk_sleep_2020 = prevalence_df_2020 |>
+  filter(category == "Health Risk Behaviors") |>
+  filter(measure_id == "SLEEP") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(sleep_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+#anti_join(risk_sleep,risk_binge, by = 'state_abbr')
+#FL in sleep but not in chol & other dfs
+
+prevalence_chol_2020 = prevalence_df |>
+  filter(category == "Health Outcomes") |>
+  filter(measure_id == "HIGHCHOL") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(chol_pre_2020 = disease_popu / total_popu) |>
+  select(-disease_popu)
+```
+
+
+```{r}
+merged_2021 = Reduce(function(df1, df2) left_join(df1, df2, by = c("state_abbr", "total_popu")), list(prevalence_chol, risk_binge, risk_lpa, risk_smoking, prevention_insurance, prevention_cholscreen))
+
+merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
+```
+
+
+
