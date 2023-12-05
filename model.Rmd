@@ -9,11 +9,12 @@ output:
     code_folding: hide
 ---
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE}
 # load packages and basic settings
 library(tidyverse)
 library(modelr)
 library(purrr)
+library(corrplot)
 
 set.seed(1)
 
@@ -39,7 +40,8 @@ scale_fill_discrete = scale_fill_viridis_d
 model_df = read_csv("~/desktop/combine.csv") |> 
   mutate(
     chol_cat = ifelse(total_cholesterol < 200, 0, 1),
-    alcohol_use_order = as.factor(alcohol_use_order)
+    alcohol_use_order = as.factor(alcohol_use_order),
+    physical_activity = relevel(as.factor(physical_activity), ref = "Light/Unknown activity")
   )
 
 # create subset for cholestorl level of desirable level and of above desirable level 
@@ -271,22 +273,33 @@ cat_des_df =
 cat_des_df
 ```
 
-# Bulding model
+# Building model
 
-In this study, out response variable is total cholesterol level, and our explanatory variable is cotinine. We decide to analyze the association step by step. (significance level = 0.05)
+In this study, out response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1)cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`).  We decide to analyze the association step by step. (significance level = 0.05)
 
 ## Check the dataset
 
 ```{r, message=FALSE}
 model_df |> 
   ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point()
+
+model_df |> 
+  ggplot(aes(x = alcohol_use_cat, y = total_cholesterol)) + geom_point()
+
+model_df |> 
+  ggplot(aes(x = physical_activity, y = total_cholesterol)) + geom_point()
 ```
 
-Based on the scatterplot, we can find a slightly negative linear trend. So, we first decide to use linear regression model.
+Based on the scatterplot, we can find slightly negative linear trends. Therefore, we decide to use linear regression model.
 
-## Univariate linear regression
+## Model selection
 
-Model 1: total_cholesterol = cotinine
+
+### 1. main explanatory variable: cotinine
+
+
+#### Univariate linear regression: total_cholesterol = cotinine
+
 ```{r, message=FALSE}
 fit_1 = lm(total_cholesterol ~ cotinine, data = model_df)
 
@@ -303,22 +316,397 @@ model_df |>
 
 We can see that cotinine is significantly associated with total cholesterol level. We also check the qq-plot and find that the residuals among followed a normal distribution, which indicates a suitability of using linear regression.
 
-## Multivariates linear regression
+
+#### Test between cotinine and other potential covariables
 
 ```{r}
-# fit_2 = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = model_df)
+lm(cotinine ~ age, data = model_df) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
 
-fit_2 = lm(total_cholesterol ~ cotinine + age + marital_status + education_level_20 + physical_activity + alcohol_use_cat, data = model_df)
+lm(cotinine ~ gender, data = model_df) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
 
-fit_2 |> 
+lm(cotinine ~ race, data = model_df) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+lm(cotinine ~ marital_status, data = model_df) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+lm(cotinine ~ education_level_20, data = model_df) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+lm(cotinine ~ poverty_level, data = model_df) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+```
+
+We can find that all the potential covariables are significantly associated with continine, indicating that they eligible for being considered as confounders. Therefore, covariables age, gender, martial_status, education_level_20, and poverty_level will be added into our multivariable linear regression.
+
+
+#### Multivariable linear regression
+
+fit_cot: total_cholesterol = cotinine + age + gender + race + marital_status + education_level_20 + poverty_level
+
+```{r}
+fit_cot = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+
+fit_cot |> 
   broom::tidy() |> 
   knitr::kable(digits = 3)
 ```
 
-adding gender, rqce, poverty_level --> not significant
 
-## logistic
+### 2. main explanatory variable: physical_activity
 
+
+#### Univariate linear regression: total_cholesterol = physical_activity
+
+```{r, message=FALSE}
+fit_2 = lm(total_cholesterol ~ physical_activity, data = model_df)
+
+fit_2 |> 
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  modelr::add_residuals(fit_2) |> 
+  ggplot(aes(sample = resid)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+We can see that physical_activity is not significantly associated with total cholesterol level. We also check the qq-plot and find that the residuals among followed a normal distribution, which indicates a suitability of using linear regression.
+
+
+#### Test between physical_activity and other potential covariables
+
+```{r}
+model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2))
+  ) |> 
+  lm(physical_activity ~ age, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2))
+  ) |> 
+  lm(physical_activity ~ gender, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2))
+  ) |> 
+  lm(physical_activity ~ race, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2))
+  ) |> 
+  lm(physical_activity ~ marital_status, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2))
+  ) |> 
+  lm(physical_activity ~ education_level_20, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2))
+  ) |> 
+  lm(physical_activity ~ poverty_level, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+```
+
+We can find that all the potential covariables are significantly associated with physical_activity, indicating that they eligible for being considered as confounders. Therefore, covariables age, gender, martial_status, education_level_20, and poverty_level will be added into our multivariable linear regression.
+
+
+#### Multivariable linear regression
+
+fit_phy: total_cholesterol = physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level
+
+```{r}
+fit_phy = lm(total_cholesterol ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+
+fit_phy |> 
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+```
+
+
+### 3. main explanatory variable: alcohol_use_cat
+
+
+#### Univariate linear regression: total_cholesterol = alcohol_use_cat
+
+```{r, message=FALSE}
+fit_3 = lm(total_cholesterol ~ alcohol_use_cat, data = model_df)
+
+fit_3 |> 
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  modelr::add_residuals(fit_3) |> 
+  ggplot(aes(sample = resid)) +
+  stat_qq() +
+  stat_qq_line()
+```
+
+We can see that alcohol_use_cat is significantly associated with total cholesterol level. We also check the qq-plot and find that the residuals among followed a normal distribution, which indicates a suitability of using linear regression.
+
+
+#### Test between alcohol_use_cat and other potential covariables
+
+```{r}
+model_df |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+  ) |> 
+  lm(alcohol_use_cat ~ age, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+  ) |> 
+  lm(alcohol_use_cat ~ gender, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+  ) |> 
+  lm(alcohol_use_cat ~ race, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+  ) |> 
+  lm(alcohol_use_cat ~ marital_status, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+  ) |> 
+  lm(alcohol_use_cat ~ education_level_20, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+
+model_df |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+  ) |> 
+  lm(alcohol_use_cat ~ poverty_level, data = _) |> 
+  broom::tidy() |> 
+  select(term, estimate, p.value) |> 
+  knitr::kable(digits = 3)
+```
+
+We can find that all the potential covariables are significantly associated with alcohol_use_cat, indicating that they eligible for being considered as confounders. Therefore, covariables age, gender, martial_status, education_level_20, and poverty_level will be added into our multivariable linear regression.
+
+
+#### Multivariable linear regression
+
+fit_alc: total_cholesterol = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level
+
+```{r}
+fit_alc = lm(total_cholesterol ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+
+fit_alc |> 
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+```
+
+
+### 4. explanatory variables: cotinine, physical_activity, and alcohol_use_cat
+
+fit_full: total_cholesterol = cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level
+
+```{r}
+fit_full = lm(total_cholesterol ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+
+fit_full |> 
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+```
+
+
+### 5. Comparison among models: cross validation
+
+
+```{r, message = FALSE}
+model_cv_df = 
+  model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2)),
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2))
+    )
+
+# create training and testing sets
+cv_df =
+  model_cv_df |> 
+  crossv_mc(n = 1000) |> 
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+cv_results =
+  cv_df |> 
+  mutate(
+    fit_cot = map(train, \(df) lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
+    fit_phy = map(train, \(df) lm(total_cholesterol ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
+    fit_alc = map(train, \(df) lm(total_cholesterol ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
+    fit_full = map(train, \(df) lm(total_cholesterol ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = df))
+  ) |> 
+  mutate(
+    rmse_fit_cot = map2_dbl(fit_cot, test, \(model, df) rmse(model, df)),
+    rmse_fit_phy = map2_dbl(fit_phy, test, \(model, df) rmse(model, df)),
+    rmse_fit_alc = map2_dbl(fit_alc, test, \(model, df) rmse(model, df)),
+    rmse_fit_full = map2_dbl(fit_full, test, \(model, df) rmse(model, df))
+  )
+
+cv_results |> 
+  select(starts_with("rmse")) |> 
+  pivot_longer(
+    everything(),
+    names_to = "model_type",
+    values_to = "rmse",
+    names_prefix = "rmse_"
+  ) |> 
+  ggplot(aes(x = model_type, y = rmse)) + geom_violin()
+```
+
+
+### 6. Comparison among models: r square
+
+```{r}
+rsquare(fit_cot, data = model_df)
+rsquare(fit_phy, data = model_df)
+rsquare(fit_alc, data = model_df)
+rsquare(fit_full, data = model_df)
+```
+
+
+
+
+
+
+
+
+
+
+# drafts
+
+
+### test for logistic model
+
+```{r}
+model_cv_log_df = 
+  model_df |> 
+  mutate(
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2)),
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2)),
+    physical_activity = as.numeric(physical_activity),
+    alcohol_use_cat = as.numeric(alcohol_use_cat)
+    )
+
+log_fit_cot = glm(chol_cat ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
+
+log_fit_phy = glm(chol_cat ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
+
+log_fit_alc = glm(chol_cat ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
+
+log_fit_full = glm(chol_cat ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
+
+# r^2
+rsquare(log_fit_cot, data = model_cv_log_df)
+rsquare(log_fit_phy, data = model_cv_log_df)
+rsquare(log_fit_alc, data = model_cv_log_df)
+rsquare(log_fit_full, data = model_cv_log_df)
+
+# rmse
+
+# create training and testing sets
+cv_log_df =
+  model_cv_log_df |> 
+  crossv_mc(n = 100) |> 
+  mutate(
+    train = map(train, as_tibble),
+    test = map(test, as_tibble)
+  )
+
+cv_log_results =
+  cv_log_df |> 
+  mutate(
+    log_fit_cot = map(train, \(df) glm(chol_cat ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())),
+    log_fit_phy = map(train, \(df) glm(chol_cat ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())),
+    log_fit_alc = map(train, \(df) glm(chol_cat ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())),
+    log_fit_full = map(train, \(df) glm(chol_cat ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial()))
+  ) |> 
+  mutate(
+    rmse_log_fit_cot = map2_dbl(log_fit_cot, test, \(model, df) rmse(model, df)),
+    rmse_log_fit_phy = map2_dbl(log_fit_phy, test, \(model, df) rmse(model, df)),
+    rmse_log_fit_alc = map2_dbl(log_fit_alc, test, \(model, df) rmse(model, df)),
+    rmse_log_fit_full = map2_dbl(log_fit_full, test, \(model, df) rmse(model, df))
+  )
+
+cv_log_results |> 
+  select(starts_with("rmse")) |> 
+  pivot_longer(
+    everything(),
+    names_to = "model_type",
+    values_to = "rmse",
+    names_prefix = "rmse_log_"
+  ) |> 
+  ggplot(aes(x = model_type, y = rmse)) + geom_violin()
+```
+
+
+##### logistic
+
+x = cotinine
 ```{r}
 fit1 = glm(chol_cat ~ cotinine, data = model_df, family = binomial())
 
@@ -335,7 +723,7 @@ fit3 |>
   knitr::kable(digits = 3)
 ```
 
-## test
+##### test for stratified linear regression
 
 ```{r}
 test_df =
@@ -349,3 +737,59 @@ fit_2 |>
   knitr::kable(digits = 3)
 ```
 
+
+##### test for bin / cat cotinine level
+
+```{r}
+test_df = 
+  model_df |> 
+  mutate(
+    coti_cat = ifelse(cotinine <= 10, 0, ifelse(cotinine > 10 & cotinine < 500, 1, 2))
+  )
+
+fit_2 = lm(total_cholesterol ~ coti_cat + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = test_df) |> 
+  broom::tidy() |> 
+  knitr::kable()
+```
+binary & categorial: neither sig
+
+##### test for x and covariables
+
+```{r}
+model_df |> 
+  filter(!is.na(alcohol_use_cat)) |> 
+  mutate(
+    alcohol_use_cat = ifelse(alcohol_use_cat == "Light Drinker", 0, ifelse(alcohol_use_cat == "Moderate Drinker", 1, 2)),
+    physical_activity = ifelse(physical_activity == "Light/Unknown activity", 0, ifelse(physical_activity == "Moderate activity", 1, 2)),
+    alcohol_use_cat = as.numeric(alcohol_use_cat)
+  ) |> 
+  select(cotinine, alcohol_use_cat, physical_activity) |> 
+  cor() |> 
+  corrplot()
+```
+
+
+##### test for multicolinearity (linear model)
+
+```{r}
+test_vif = 
+  model_df |> 
+  select(total_cholesterol, age, cotinine, gender, race, marital_status, education_level_20, poverty_level, physical_activity, alcohol_use_cat)
+
+fit_vif = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = test_vif)
+
+car::vif(fit_vif)
+```
+VIF = 1: There is no correlation between a given predictor variable and any other predictor variables in the model.
+VIF between 1 and 5: There is moderate correlation between a given predictor variable and other predictor variables in the model.
+VIF > 5: There is severe correlation between a given predictor variable and other predictor variables in the model.
+
+##### test for heteroscedasticity (linearmodel)
+```{r}
+fit_vif = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = test_vif)
+
+test_vif |> 
+  add_residuals(fit_vif) |> 
+  ggplot(aes(y = resid, x = cotinine)) + geom_point(col = 'blue') + geom_abline(slope = 0)
+```
+there is a trend --> when x=cotinine, there is a prob of heteroscedasticity.
