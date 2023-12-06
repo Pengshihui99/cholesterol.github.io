@@ -1,6 +1,10 @@
 ---
-title: "clean"
-output: github_document
+title: "Clean"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
