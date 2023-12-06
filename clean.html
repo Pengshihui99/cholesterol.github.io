@@ -453,7 +453,7 @@ of family monthly poverty level.</h3>
     poverty_level = case_when(
       poverty_level &lt; 1.3 ~ &quot;Below 130% of Poverty Guidelines&quot;,
       between(poverty_level, 1.3, 1.85) ~ &quot;Between 130% and 185% of Poverty Guidelines&quot;,
-      poverty_level &gt; 1.85 ~ &quot;Below 185% of Poverty Guidelines&quot;,
+      poverty_level &gt; 1.85 ~ &quot;Above 185% of Poverty Guidelines&quot;,
       TRUE ~ as.character(poverty_level))
         )</code></pre>
 </div>
