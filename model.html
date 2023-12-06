@@ -368,11 +368,12 @@ div.tocify {
 </div>
 
 
+<p>Load packages and import datasets.</p>
 <pre class="r"><code># load packages and basic settings
 library(tidyverse)
 library(modelr)
 library(purrr)
-library(corrplot)
+library(MASS)
 
 set.seed(1)
 
@@ -395,7 +396,7 @@ scale_fill_discrete = scale_fill_viridis_d
 # import data (currently: using direct path)
 
 # total cholesterol &lt; 200 -&gt; 0, &gt;= 200 -&gt; 1
-model_df = read_csv(&quot;~/desktop/combine.csv&quot;) |&gt; 
+model_df = read_csv(&quot;data/combine.csv&quot;) |&gt; 
   mutate(
     chol_cat = ifelse(total_cholesterol &lt; 200, 0, 1),
     alcohol_use_order = as.factor(alcohol_use_order),
@@ -456,7 +457,8 @@ t_test = function(variable) {
 
 p_value = 
   lapply(c(&quot;age&quot;, &quot;bmi&quot;, &quot;sleep_hour&quot;, &quot;cotinine&quot;), t_test) |&gt;
-  bind_rows()
+  bind_rows() |&gt; 
+  as.data.frame()
 
 # mean and std for all continuous variables, among samples of desirable cholesteral level (named them as &quot;control&quot;)
 list_conti_desire = list(
@@ -498,8 +500,9 @@ std_ab_desire = sapply(list_conti_ab_desire, sd) |&gt;
 <h3>description table</h3>
 <pre class="r"><code># combind - continuous
 conti_des_df =
-  cbind(mean_all, std_all, mean_desire, std_desire, mean_ab_desire, std_ab_desire, p_value) |&gt; 
-  select(overall_mean, overall_std, p_value, control_mean, control_std, case_mean, case_std) |&gt; 
+  as.data.frame(cbind(mean_all, std_all, mean_desire, std_desire, mean_ab_desire, std_ab_desire, p_value))
+
+conti_des_df = conti_des_df[, -grep(&quot;variable&quot;, colnames(conti_des_df))] |&gt; 
   knitr::kable(digits = 3)
 
 conti_des_df</code></pre>
@@ -508,22 +511,22 @@ conti_des_df</code></pre>
 <col width="12%" />
 <col width="14%" />
 <col width="13%" />
-<col width="9%" />
 <col width="14%" />
 <col width="13%" />
 <col width="11%" />
 <col width="10%" />
+<col width="9%" />
 </colgroup>
 <thead>
 <tr class="header">
 <th align="left"></th>
 <th align="right">overall_mean</th>
 <th align="right">overall_std</th>
-<th align="right">p_value</th>
 <th align="right">control_mean</th>
 <th align="right">control_std</th>
 <th align="right">case_mean</th>
 <th align="right">case_std</th>
+<th align="right">p_value</th>
 </tr>
 </thead>
 <tbody>
@@ -531,41 +534,41 @@ conti_des_df</code></pre>
 <td align="left">age</td>
 <td align="right">49.414</td>
 <td align="right">18.302</td>
-<td align="right">0.000</td>
 <td align="right">48.014</td>
 <td align="right">19.312</td>
 <td align="right">52.326</td>
 <td align="right">15.604</td>
+<td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">bmi</td>
 <td align="right">29.914</td>
 <td align="right">7.536</td>
-<td align="right">0.150</td>
 <td align="right">29.993</td>
 <td align="right">7.870</td>
 <td align="right">29.750</td>
 <td align="right">6.787</td>
+<td align="right">0.150</td>
 </tr>
 <tr class="odd">
 <td align="left">sleep_hour</td>
 <td align="right">7.593</td>
 <td align="right">1.667</td>
-<td align="right">0.072</td>
 <td align="right">7.616</td>
 <td align="right">1.692</td>
 <td align="right">7.546</td>
 <td align="right">1.612</td>
+<td align="right">0.072</td>
 </tr>
 <tr class="even">
 <td align="left">cotinine</td>
 <td align="right">55.683</td>
 <td align="right">128.581</td>
-<td align="right">0.026</td>
 <td align="right">57.823</td>
 <td align="right">131.881</td>
 <td align="right">51.232</td>
 <td align="right">121.334</td>
+<td align="right">0.026</td>
 </tr>
 </tbody>
 </table>
@@ -621,7 +624,8 @@ count_all_function = function(variable) {
   }
 
 cat_count_chisq = lapply(cat_vars, count_all_function) |&gt; 
-  bind_rows()
+  bind_rows() |&gt; 
+  as.data.frame()
 
 # n and pct for categorical variables, among samples of desirable cholesteral level (named them as &quot;control&quot;)
 list_cat_ctrl = list (
@@ -654,7 +658,8 @@ count_ctrl_function = function(variable) {
 }
 
 cat_count_ctrl = lapply(cat_vars_ctrl, count_ctrl_function) |&gt; 
-  bind_rows()
+  bind_rows() |&gt; 
+  as.data.frame()
 
 # n and pct for categorical variables, among samples of above-desirable cholesterol level (named them as &quot;case&quot;)
 list_cat_case = list (
@@ -687,14 +692,16 @@ count_case_function = function(variable) {
 }
 
 cat_count_case = lapply(cat_vars_case, count_case_function) |&gt; 
-  bind_rows()</code></pre>
+  bind_rows() |&gt; 
+  as.data.frame()</code></pre>
 </div>
 <div id="description-table-1" class="section level3">
 <h3>description table</h3>
 <pre class="r"><code>cat_des_df =
-  bind_cols(cat_count_chisq, cat_count_ctrl, cat_count_case) |&gt; 
-  select(-variable...5, -variable...8) |&gt; 
-  rename(variable = variable...1) |&gt; 
+  cbind.data.frame(cat_count_chisq, cat_count_ctrl, cat_count_case) |&gt; 
+  drop_na()
+
+cat_des_df = cat_des_df[, !duplicated(names(cat_des_df))] |&gt; 
   knitr::kable(digits = 3)
 
 cat_des_df</code></pre>
@@ -903,36 +910,6 @@ cat_des_df</code></pre>
 <td align="right">0.154</td>
 </tr>
 <tr class="odd">
-<td align="left">NA</td>
-<td align="right">3499</td>
-<td align="right">0.429</td>
-<td align="right">0.014</td>
-<td align="right">2423</td>
-<td align="right">0.440</td>
-<td align="right">656</td>
-<td align="right">0.248</td>
-</tr>
-<tr class="even">
-<td align="left">NA</td>
-<td align="right">2696</td>
-<td align="right">0.330</td>
-<td align="right">0.014</td>
-<td align="right">1778</td>
-<td align="right">0.323</td>
-<td align="right">918</td>
-<td align="right">0.346</td>
-</tr>
-<tr class="odd">
-<td align="left">NA</td>
-<td align="right">1966</td>
-<td align="right">0.241</td>
-<td align="right">0.014</td>
-<td align="right">1310</td>
-<td align="right">0.238</td>
-<td align="right">1076</td>
-<td align="right">0.406</td>
-</tr>
-<tr class="even">
 <td align="left">Light Drinker</td>
 <td align="right">3424</td>
 <td align="right">0.493</td>
@@ -942,7 +919,7 @@ cat_des_df</code></pre>
 <td align="right">1046</td>
 <td align="right">0.462</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Moderate Drinker</td>
 <td align="right">2573</td>
 <td align="right">0.370</td>
@@ -952,7 +929,7 @@ cat_des_df</code></pre>
 <td align="right">837</td>
 <td align="right">0.370</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Heavy Drinker</td>
 <td align="right">955</td>
 <td align="right">0.137</td>
@@ -978,26 +955,38 @@ step by step. (significance level = 0.05)</p>
 <div id="check-the-dataset" class="section level2">
 <h2>Check the dataset</h2>
 <pre class="r"><code>model_df |&gt; 
-  ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point()</code></pre>
-<pre><code>## Warning: Removed 1 rows containing missing values (`geom_point()`).</code></pre>
+  ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point() +
+  labs(title = &quot;Total_cholesterol against serum cotinine&quot;, x = &quot;Serum cotinine (ng/ml)&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-1.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
-  ggplot(aes(x = alcohol_use_cat, y = total_cholesterol)) + geom_point()</code></pre>
+  ggplot(aes(x = alcohol_use_cat, y = total_cholesterol)) + geom_point() +
+  labs(title = &quot;Total_cholesterol against alcohol use&quot;, x = &quot;Alcohol use&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-2.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
-  ggplot(aes(x = physical_activity, y = total_cholesterol)) + geom_point()</code></pre>
+  ggplot(aes(x = physical_activity, y = total_cholesterol)) + geom_point() +
+  labs(title = &quot;Total_cholesterol against physical_activity&quot;, x = &quot;Physical activity&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-3.png" width="90%" /></p>
-<p>Based on the scatterplot, we can find slightly negative linear
-trends. Therefore, we decide to use linear regression model.</p>
+<pre class="r"><code>model_df |&gt; 
+  ggplot(aes(x = total_cholesterol)) + geom_density() +
+  labs(title = &quot;Destribution of total_cholesterol&quot;, x = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+<p><img src="model_files/figure-html/unnamed-chunk-6-4.png" width="90%" /></p>
+<ul>
+<li>Based on the scatterplot, we can find slightly negative linear
+trends, but there is heteroscedasticity problem. Also, based on the
+density plot, we can find that the distribution of y is asymmetry.
+Therefore, we decide to use linear regression model with
+log-transformation on response variable (y)
+<code>total_cholesterol</code> for the following models.</li>
+</ul>
 </div>
 <div id="model-selection" class="section level2">
 <h2>Model selection</h2>
 <div id="main-explanatory-variable-cotinine" class="section level3">
 <h3>1. main explanatory variable: cotinine</h3>
-<div id="univariate-linear-regression-total_cholesterol-cotinine"
+<div id="univariable-linear-regression-total_cholesterol-cotinine"
 class="section level4">
-<h4>Univariate linear regression: total_cholesterol = cotinine</h4>
-<pre class="r"><code>fit_1 = lm(total_cholesterol ~ cotinine, data = model_df)
+<h4>Univariable linear regression: total_cholesterol = cotinine</h4>
+<pre class="r"><code>fit_1 = lm(log(total_cholesterol) ~ cotinine, data = model_df)
 
 fit_1 |&gt; 
   broom::tidy() |&gt; 
@@ -1015,17 +1004,17 @@ fit_1 |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">185.230</td>
-<td align="right">0.495</td>
-<td align="right">374.539</td>
-<td align="right">0.000</td>
+<td align="right">5.198</td>
+<td align="right">0.003</td>
+<td align="right">1944.859</td>
+<td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">cotinine</td>
-<td align="right">-0.011</td>
-<td align="right">0.004</td>
-<td align="right">-3.219</td>
-<td align="right">0.001</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">-3.776</td>
+<td align="right">0</td>
 </tr>
 </tbody>
 </table>
@@ -1034,230 +1023,20 @@ fit_1 |&gt;
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line()</code></pre>
-<pre><code>## Warning: Removed 1 rows containing non-finite values (`stat_qq()`).</code></pre>
-<pre><code>## Warning: Removed 1 rows containing non-finite values (`stat_qq_line()`).</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-7-1.png" width="90%" /></p>
-<p>We can see that cotinine is significantly associated with total
+<ul>
+<li>We can see that cotinine is significantly associated with total
 cholesterol level. We also check the qq-plot and find that the residuals
-among followed a normal distribution, which indicates a suitability of
-using linear regression.</p>
-</div>
-<div id="test-between-cotinine-and-other-potential-covariables"
-class="section level4">
-<h4>Test between cotinine and other potential covariables</h4>
-<pre class="r"><code>lm(cotinine ~ age, data = model_df) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">67.630</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">age</td>
-<td align="right">-0.242</td>
-<td align="right">0.002</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>lm(cotinine ~ gender, data = model_df) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">41.232</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">genderMale</td>
-<td align="right">29.762</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>lm(cotinine ~ race, data = model_df) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">21.943</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic Asian</td>
-<td align="right">-1.214</td>
-<td align="right">0.807</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic Black</td>
-<td align="right">57.469</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic White</td>
-<td align="right">45.842</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">raceOther Race</td>
-<td align="right">67.007</td>
-<td align="right">0.000</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>lm(cotinine ~ marital_status, data = model_df) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">48.337</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">marital_statusNever married</td>
-<td align="right">22.228</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">20.669</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>lm(cotinine ~ education_level_20, data = model_df) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="77%" />
-<col width="12%" />
-<col width="10%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">91.611</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20College graduate or above</td>
-<td align="right">-71.539</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20High school graduate/GED or
-equivalent</td>
-<td align="right">-10.469</td>
-<td align="right">0.048</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20Less than 9th grade</td>
-<td align="right">-53.554</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20Some college or AA degree</td>
-<td align="right">-30.949</td>
-<td align="right">0.000</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>lm(cotinine ~ poverty_level, data = model_df) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="77%" />
-<col width="12%" />
-<col width="10%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">83.216</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">-48.234</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">poverty_levelBetween 130% and 185% of Poverty
-Guidelines</td>
-<td align="right">-12.332</td>
-<td align="right">0.012</td>
-</tr>
-</tbody>
-</table>
-<p>We can find that all the potential covariables are significantly
-associated with continine, indicating that they eligible for being
-considered as confounders. Therefore, covariables age, gender,
-martial_status, education_level_20, and poverty_level will be added into
-our multivariable linear regression.</p>
+followed a normal distribution, which indicates a suitability of using
+linear regression.</li>
+<li>Therefore, we move forward to build multivariable regression.</li>
+</ul>
 </div>
 <div id="multivariable-linear-regression" class="section level4">
 <h4>Multivariable linear regression</h4>
-<p>fit_cot: total_cholesterol = cotinine + age + gender + race +
+<p>fit_cot: log(total_cholesterol) = cotinine + age + gender + race +
 marital_status + education_level_20 + poverty_level</p>
-<pre class="r"><code>fit_cot = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+<pre class="r"><code>fit_cot = lm(log(total_cholesterol) ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_cot |&gt; 
   broom::tidy() |&gt; 
@@ -1282,117 +1061,117 @@ fit_cot |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">185.501</td>
-<td align="right">2.616</td>
-<td align="right">70.905</td>
+<td align="right">5.209</td>
+<td align="right">0.014</td>
+<td align="right">370.819</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">cotinine</td>
-<td align="right">0.001</td>
-<td align="right">0.004</td>
-<td align="right">0.249</td>
-<td align="right">0.803</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">-0.192</td>
+<td align="right">0.847</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
-<td align="right">0.075</td>
-<td align="right">0.034</td>
-<td align="right">2.176</td>
-<td align="right">0.030</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">1.297</td>
+<td align="right">0.195</td>
 </tr>
 <tr class="even">
 <td align="left">genderMale</td>
-<td align="right">-7.774</td>
-<td align="right">1.064</td>
-<td align="right">-7.305</td>
+<td align="right">-0.045</td>
+<td align="right">0.006</td>
+<td align="right">-7.911</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">raceNon-Hispanic Asian</td>
-<td align="right">2.441</td>
-<td align="right">1.995</td>
-<td align="right">1.223</td>
-<td align="right">0.221</td>
+<td align="right">0.013</td>
+<td align="right">0.011</td>
+<td align="right">1.186</td>
+<td align="right">0.236</td>
 </tr>
 <tr class="even">
 <td align="left">raceNon-Hispanic Black</td>
-<td align="right">-6.045</td>
-<td align="right">1.642</td>
-<td align="right">-3.681</td>
+<td align="right">-0.034</td>
+<td align="right">0.009</td>
+<td align="right">-3.899</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">raceNon-Hispanic White</td>
-<td align="right">-2.127</td>
-<td align="right">1.522</td>
-<td align="right">-1.397</td>
-<td align="right">0.162</td>
+<td align="right">-0.012</td>
+<td align="right">0.008</td>
+<td align="right">-1.463</td>
+<td align="right">0.144</td>
 </tr>
 <tr class="even">
 <td align="left">raceOther Race</td>
-<td align="right">1.204</td>
-<td align="right">2.676</td>
-<td align="right">0.450</td>
-<td align="right">0.653</td>
+<td align="right">0.009</td>
+<td align="right">0.014</td>
+<td align="right">0.607</td>
+<td align="right">0.544</td>
 </tr>
 <tr class="odd">
 <td align="left">marital_statusNever married</td>
-<td align="right">-7.130</td>
-<td align="right">1.493</td>
-<td align="right">-4.775</td>
+<td align="right">-0.039</td>
+<td align="right">0.008</td>
+<td align="right">-4.903</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">1.897</td>
-<td align="right">1.372</td>
-<td align="right">1.383</td>
-<td align="right">0.167</td>
+<td align="right">0.011</td>
+<td align="right">0.007</td>
+<td align="right">1.442</td>
+<td align="right">0.149</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20College graduate or above</td>
-<td align="right">4.260</td>
-<td align="right">2.052</td>
-<td align="right">2.076</td>
-<td align="right">0.038</td>
+<td align="right">0.026</td>
+<td align="right">0.011</td>
+<td align="right">2.361</td>
+<td align="right">0.018</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20High school graduate/GED or
 equivalent</td>
-<td align="right">-0.862</td>
-<td align="right">1.937</td>
-<td align="right">-0.445</td>
-<td align="right">0.656</td>
+<td align="right">-0.005</td>
+<td align="right">0.010</td>
+<td align="right">-0.471</td>
+<td align="right">0.638</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20Less than 9th grade</td>
-<td align="right">2.153</td>
-<td align="right">2.673</td>
-<td align="right">0.805</td>
-<td align="right">0.421</td>
+<td align="right">0.013</td>
+<td align="right">0.014</td>
+<td align="right">0.893</td>
+<td align="right">0.372</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20Some college or AA degree</td>
-<td align="right">1.689</td>
-<td align="right">1.886</td>
-<td align="right">0.896</td>
-<td align="right">0.370</td>
+<td align="right">0.010</td>
+<td align="right">0.010</td>
+<td align="right">1.006</td>
+<td align="right">0.314</td>
 </tr>
 <tr class="odd">
 <td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">2.380</td>
-<td align="right">1.308</td>
-<td align="right">1.820</td>
-<td align="right">0.069</td>
+<td align="right">0.013</td>
+<td align="right">0.007</td>
+<td align="right">1.811</td>
+<td align="right">0.070</td>
 </tr>
 <tr class="even">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">1.856</td>
-<td align="right">1.634</td>
-<td align="right">1.136</td>
-<td align="right">0.256</td>
+<td align="right">0.011</td>
+<td align="right">0.009</td>
+<td align="right">1.245</td>
+<td align="right">0.213</td>
 </tr>
 </tbody>
 </table>
@@ -1402,11 +1181,11 @@ Guidelines</td>
 class="section level3">
 <h3>2. main explanatory variable: physical_activity</h3>
 <div
-id="univariate-linear-regression-total_cholesterol-physical_activity"
+id="univariable-linear-regression-total_cholesterol-physical_activity"
 class="section level4">
-<h4>Univariate linear regression: total_cholesterol =
+<h4>Univariable linear regression: total_cholesterol =
 physical_activity</h4>
-<pre class="r"><code>fit_2 = lm(total_cholesterol ~ physical_activity, data = model_df)
+<pre class="r"><code>fit_2 = lm(log(total_cholesterol) ~ physical_activity, data = model_df)
 
 fit_2 |&gt; 
   broom::tidy() |&gt; 
@@ -1431,24 +1210,24 @@ fit_2 |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">185.380</td>
-<td align="right">0.925</td>
-<td align="right">200.465</td>
+<td align="right">5.197</td>
+<td align="right">0.005</td>
+<td align="right">1039.540</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">physical_activityModerate activity</td>
-<td align="right">0.511</td>
-<td align="right">1.216</td>
-<td align="right">0.420</td>
-<td align="right">0.674</td>
+<td align="right">0.004</td>
+<td align="right">0.007</td>
+<td align="right">0.599</td>
+<td align="right">0.549</td>
 </tr>
 <tr class="odd">
 <td align="left">physical_activityVigorous activity</td>
-<td align="right">-2.229</td>
-<td align="right">1.156</td>
-<td align="right">-1.929</td>
-<td align="right">0.054</td>
+<td align="right">-0.010</td>
+<td align="right">0.006</td>
+<td align="right">-1.570</td>
+<td align="right">0.117</td>
 </tr>
 </tbody>
 </table>
@@ -1457,252 +1236,20 @@ fit_2 |&gt;
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line()</code></pre>
-<p><img src="model_files/figure-html/unnamed-chunk-10-1.png" width="90%" /></p>
-<p>We can see that physical_activity is not significantly associated
+<p><img src="model_files/figure-html/unnamed-chunk-9-1.png" width="90%" /></p>
+<ul>
+<li>We can see that physical_activity is not significantly associated
 with total cholesterol level. We also check the qq-plot and find that
-the residuals among followed a normal distribution, which indicates a
-suitability of using linear regression.</p>
-</div>
-<div id="test-between-physical_activity-and-other-potential-covariables"
-class="section level4">
-<h4>Test between physical_activity and other potential covariables</h4>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2))
-  ) |&gt; 
-  lm(physical_activity ~ age, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1.830</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">age</td>
-<td align="right">-0.013</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2))
-  ) |&gt; 
-  lm(physical_activity ~ gender, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1.048</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">genderMale</td>
-<td align="right">0.289</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2))
-  ) |&gt; 
-  lm(physical_activity ~ race, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1.201</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic Asian</td>
-<td align="right">-0.072</td>
-<td align="right">0.023</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic Black</td>
-<td align="right">-0.035</td>
-<td align="right">0.169</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic White</td>
-<td align="right">-0.001</td>
-<td align="right">0.963</td>
-</tr>
-<tr class="odd">
-<td align="left">raceOther Race</td>
-<td align="right">0.105</td>
-<td align="right">0.017</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2))
-  ) |&gt; 
-  lm(physical_activity ~ marital_status, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1.185</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">marital_statusNever married</td>
-<td align="right">0.174</td>
-<td align="right">0</td>
-</tr>
-<tr class="odd">
-<td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">-0.206</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2))
-  ) |&gt; 
-  lm(physical_activity ~ education_level_20, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="77%" />
-<col width="12%" />
-<col width="10%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1.039</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20College graduate or above</td>
-<td align="right">0.248</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20High school graduate/GED or
-equivalent</td>
-<td align="right">0.108</td>
-<td align="right">0.001</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20Less than 9th grade</td>
-<td align="right">-0.144</td>
-<td align="right">0.001</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20Some college or AA degree</td>
-<td align="right">0.175</td>
-<td align="right">0.000</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2))
-  ) |&gt; 
-  lm(physical_activity ~ poverty_level, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="77%" />
-<col width="12%" />
-<col width="10%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">1.118</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.137</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">poverty_levelBetween 130% and 185% of Poverty
-Guidelines</td>
-<td align="right">-0.024</td>
-<td align="right">0.439</td>
-</tr>
-</tbody>
-</table>
-<p>We can find that all the potential covariables are significantly
-associated with physical_activity, indicating that they eligible for
-being considered as confounders. Therefore, covariables age, gender,
-martial_status, education_level_20, and poverty_level will be added into
-our multivariable linear regression.</p>
+the residuals followed a normal distribution, which indicates a
+suitability of using linear regression.</li>
+<li>Therefore, we move forward to build multivariable regression.</li>
+</ul>
 </div>
 <div id="multivariable-linear-regression-1" class="section level4">
 <h4>Multivariable linear regression</h4>
-<p>fit_phy: total_cholesterol = physical_activity + age + gender + race
-+ marital_status + education_level_20 + poverty_level</p>
-<pre class="r"><code>fit_phy = lm(total_cholesterol ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+<p>fit_phy: log(total_cholesterol) = physical_activity + age + gender +
+race + marital_status + education_level_20 + poverty_level</p>
+<pre class="r"><code>fit_phy = lm(log(total_cholesterol) ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_phy |&gt; 
   broom::tidy() |&gt; 
@@ -1727,124 +1274,124 @@ fit_phy |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">184.280</td>
-<td align="right">2.828</td>
-<td align="right">65.162</td>
+<td align="right">5.200</td>
+<td align="right">0.015</td>
+<td align="right">342.514</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">physical_activityModerate activity</td>
-<td align="right">0.974</td>
-<td align="right">1.386</td>
-<td align="right">0.702</td>
-<td align="right">0.482</td>
+<td align="right">0.006</td>
+<td align="right">0.007</td>
+<td align="right">0.773</td>
+<td align="right">0.439</td>
 </tr>
 <tr class="odd">
 <td align="left">physical_activityVigorous activity</td>
-<td align="right">1.621</td>
-<td align="right">1.412</td>
-<td align="right">1.148</td>
-<td align="right">0.251</td>
+<td align="right">0.010</td>
+<td align="right">0.008</td>
+<td align="right">1.278</td>
+<td align="right">0.201</td>
 </tr>
 <tr class="even">
 <td align="left">age</td>
-<td align="right">0.085</td>
-<td align="right">0.036</td>
-<td align="right">2.381</td>
-<td align="right">0.017</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">1.608</td>
+<td align="right">0.108</td>
 </tr>
 <tr class="odd">
 <td align="left">genderMale</td>
-<td align="right">-7.952</td>
-<td align="right">1.078</td>
-<td align="right">-7.377</td>
+<td align="right">-0.047</td>
+<td align="right">0.006</td>
+<td align="right">-8.062</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">raceNon-Hispanic Asian</td>
-<td align="right">2.562</td>
-<td align="right">2.001</td>
-<td align="right">1.281</td>
-<td align="right">0.200</td>
+<td align="right">0.013</td>
+<td align="right">0.011</td>
+<td align="right">1.229</td>
+<td align="right">0.219</td>
 </tr>
 <tr class="odd">
 <td align="left">raceNon-Hispanic Black</td>
-<td align="right">-5.945</td>
-<td align="right">1.626</td>
-<td align="right">-3.655</td>
+<td align="right">-0.034</td>
+<td align="right">0.009</td>
+<td align="right">-3.937</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">raceNon-Hispanic White</td>
-<td align="right">-2.078</td>
-<td align="right">1.503</td>
-<td align="right">-1.383</td>
-<td align="right">0.167</td>
+<td align="right">-0.012</td>
+<td align="right">0.008</td>
+<td align="right">-1.524</td>
+<td align="right">0.128</td>
 </tr>
 <tr class="odd">
 <td align="left">raceOther Race</td>
-<td align="right">1.110</td>
-<td align="right">2.658</td>
-<td align="right">0.418</td>
-<td align="right">0.676</td>
+<td align="right">0.008</td>
+<td align="right">0.014</td>
+<td align="right">0.528</td>
+<td align="right">0.597</td>
 </tr>
 <tr class="even">
 <td align="left">marital_statusNever married</td>
-<td align="right">-7.127</td>
-<td align="right">1.493</td>
-<td align="right">-4.772</td>
+<td align="right">-0.039</td>
+<td align="right">0.008</td>
+<td align="right">-4.897</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">1.879</td>
-<td align="right">1.370</td>
-<td align="right">1.371</td>
-<td align="right">0.170</td>
+<td align="right">0.010</td>
+<td align="right">0.007</td>
+<td align="right">1.409</td>
+<td align="right">0.159</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20College graduate or above</td>
-<td align="right">4.055</td>
-<td align="right">2.043</td>
-<td align="right">1.985</td>
-<td align="right">0.047</td>
+<td align="right">0.025</td>
+<td align="right">0.011</td>
+<td align="right">2.315</td>
+<td align="right">0.021</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20High school graduate/GED or
 equivalent</td>
-<td align="right">-0.969</td>
-<td align="right">1.937</td>
-<td align="right">-0.500</td>
-<td align="right">0.617</td>
+<td align="right">-0.005</td>
+<td align="right">0.010</td>
+<td align="right">-0.515</td>
+<td align="right">0.607</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20Less than 9th grade</td>
-<td align="right">2.134</td>
-<td align="right">2.671</td>
-<td align="right">0.799</td>
-<td align="right">0.424</td>
+<td align="right">0.013</td>
+<td align="right">0.014</td>
+<td align="right">0.909</td>
+<td align="right">0.364</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20Some college or AA degree</td>
-<td align="right">1.573</td>
-<td align="right">1.883</td>
-<td align="right">0.835</td>
-<td align="right">0.404</td>
+<td align="right">0.010</td>
+<td align="right">0.010</td>
+<td align="right">0.971</td>
+<td align="right">0.332</td>
 </tr>
 <tr class="even">
 <td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">2.204</td>
-<td align="right">1.301</td>
-<td align="right">1.694</td>
-<td align="right">0.090</td>
+<td align="right">0.012</td>
+<td align="right">0.007</td>
+<td align="right">1.731</td>
+<td align="right">0.083</td>
 </tr>
 <tr class="odd">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">1.821</td>
-<td align="right">1.634</td>
-<td align="right">1.114</td>
-<td align="right">0.265</td>
+<td align="right">0.011</td>
+<td align="right">0.009</td>
+<td align="right">1.235</td>
+<td align="right">0.217</td>
 </tr>
 </tbody>
 </table>
@@ -1853,11 +1400,12 @@ Guidelines</td>
 <div id="main-explanatory-variable-alcohol_use_cat"
 class="section level3">
 <h3>3. main explanatory variable: alcohol_use_cat</h3>
-<div id="univariate-linear-regression-total_cholesterol-alcohol_use_cat"
+<div
+id="univariable-linear-regression-total_cholesterol-alcohol_use_cat"
 class="section level4">
-<h4>Univariate linear regression: total_cholesterol =
+<h4>Univariable linear regression: total_cholesterol =
 alcohol_use_cat</h4>
-<pre class="r"><code>fit_3 = lm(total_cholesterol ~ alcohol_use_cat, data = model_df)
+<pre class="r"><code>fit_3 = lm(log(total_cholesterol) ~ alcohol_use_cat, data = model_df)
 
 fit_3 |&gt; 
   broom::tidy() |&gt; 
@@ -1882,23 +1430,23 @@ fit_3 |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">192.240</td>
-<td align="right">1.329</td>
-<td align="right">144.611</td>
+<td align="right">5.235</td>
+<td align="right">0.007</td>
+<td align="right">729.265</td>
 <td align="right">0</td>
 </tr>
 <tr class="even">
 <td align="left">alcohol_use_catLight Drinker</td>
-<td align="right">-9.843</td>
-<td align="right">1.503</td>
-<td align="right">-6.547</td>
+<td align="right">-0.054</td>
+<td align="right">0.008</td>
+<td align="right">-6.703</td>
 <td align="right">0</td>
 </tr>
 <tr class="odd">
 <td align="left">alcohol_use_catModerate Drinker</td>
-<td align="right">-7.394</td>
-<td align="right">1.557</td>
-<td align="right">-4.750</td>
+<td align="right">-0.040</td>
+<td align="right">0.008</td>
+<td align="right">-4.732</td>
 <td align="right">0</td>
 </tr>
 </tbody>
@@ -1908,254 +1456,20 @@ fit_3 |&gt;
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line()</code></pre>
-<pre><code>## Warning: Removed 1209 rows containing non-finite values (`stat_qq()`).</code></pre>
-<pre><code>## Warning: Removed 1209 rows containing non-finite values (`stat_qq_line()`).</code></pre>
-<p><img src="model_files/figure-html/unnamed-chunk-13-1.png" width="90%" /></p>
-<p>We can see that alcohol_use_cat is significantly associated with
+<p><img src="model_files/figure-html/unnamed-chunk-11-1.png" width="90%" /></p>
+<ul>
+<li>We can see that alcohol_use_cat is significantly associated with
 total cholesterol level. We also check the qq-plot and find that the
-residuals among followed a normal distribution, which indicates a
-suitability of using linear regression.</p>
-</div>
-<div id="test-between-alcohol_use_cat-and-other-potential-covariables"
-class="section level4">
-<h4>Test between alcohol_use_cat and other potential covariables</h4>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2))
-  ) |&gt; 
-  lm(alcohol_use_cat ~ age, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.797</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">age</td>
-<td align="right">-0.003</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2))
-  ) |&gt; 
-  lm(alcohol_use_cat ~ gender, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.533</td>
-<td align="right">0</td>
-</tr>
-<tr class="even">
-<td align="left">genderMale</td>
-<td align="right">0.219</td>
-<td align="right">0</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2))
-  ) |&gt; 
-  lm(alcohol_use_cat ~ race, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.597</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic Asian</td>
-<td align="right">-0.042</td>
-<td align="right">0.212</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic Black</td>
-<td align="right">0.079</td>
-<td align="right">0.001</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic White</td>
-<td align="right">0.081</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">raceOther Race</td>
-<td align="right">0.010</td>
-<td align="right">0.813</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2))
-  ) |&gt; 
-  lm(alcohol_use_cat ~ marital_status, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.662</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">marital_statusNever married</td>
-<td align="right">0.051</td>
-<td align="right">0.027</td>
-</tr>
-<tr class="odd">
-<td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">-0.080</td>
-<td align="right">0.000</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2))
-  ) |&gt; 
-  lm(alcohol_use_cat ~ education_level_20, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="77%" />
-<col width="12%" />
-<col width="10%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.603</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20College graduate or above</td>
-<td align="right">0.158</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20High school graduate/GED or
-equivalent</td>
-<td align="right">0.016</td>
-<td align="right">0.610</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20Less than 9th grade</td>
-<td align="right">-0.171</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20Some college or AA degree</td>
-<td align="right">0.049</td>
-<td align="right">0.107</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>model_df |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2))
-  ) |&gt; 
-  lm(alcohol_use_cat ~ poverty_level, data = _) |&gt; 
-  broom::tidy() |&gt; 
-  select(term, estimate, p.value) |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="77%" />
-<col width="12%" />
-<col width="10%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">0.583</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.144</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">poverty_levelBetween 130% and 185% of Poverty
-Guidelines</td>
-<td align="right">-0.041</td>
-<td align="right">0.162</td>
-</tr>
-</tbody>
-</table>
-<p>We can find that all the potential covariables are significantly
-associated with alcohol_use_cat, indicating that they eligible for being
-considered as confounders. Therefore, covariables age, gender,
-martial_status, education_level_20, and poverty_level will be added into
-our multivariable linear regression.</p>
+residuals followed a normal distribution, which indicates a suitability
+of using linear regression.</li>
+<li>Therefore, we move forward to build multivariable regression.</li>
+</ul>
 </div>
 <div id="multivariable-linear-regression-2" class="section level4">
 <h4>Multivariable linear regression</h4>
-<p>fit_alc: total_cholesterol = alcohol_use_cat + age + gender + race +
-marital_status + education_level_20 + poverty_level</p>
-<pre class="r"><code>fit_alc = lm(total_cholesterol ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+<p>fit_alc: log(total_cholesterol) = alcohol_use_cat + age + gender +
+race + marital_status + education_level_20 + poverty_level</p>
+<pre class="r"><code>fit_alc = lm(log(total_cholesterol) ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_alc |&gt; 
   broom::tidy() |&gt; 
@@ -2180,124 +1494,124 @@ fit_alc |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">196.083</td>
-<td align="right">3.190</td>
-<td align="right">61.462</td>
+<td align="right">5.267</td>
+<td align="right">0.017</td>
+<td align="right">307.884</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">alcohol_use_catLight Drinker</td>
-<td align="right">-12.008</td>
-<td align="right">1.702</td>
-<td align="right">-7.056</td>
+<td align="right">-0.066</td>
+<td align="right">0.009</td>
+<td align="right">-7.277</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">alcohol_use_catModerate Drinker</td>
-<td align="right">-8.148</td>
-<td align="right">1.744</td>
-<td align="right">-4.673</td>
+<td align="right">-0.046</td>
+<td align="right">0.009</td>
+<td align="right">-4.884</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">age</td>
-<td align="right">0.072</td>
-<td align="right">0.037</td>
-<td align="right">1.941</td>
-<td align="right">0.052</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">1.045</td>
+<td align="right">0.296</td>
 </tr>
 <tr class="odd">
 <td align="left">genderMale</td>
-<td align="right">-9.685</td>
-<td align="right">1.146</td>
-<td align="right">-8.452</td>
+<td align="right">-0.056</td>
+<td align="right">0.006</td>
+<td align="right">-9.141</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">raceNon-Hispanic Asian</td>
-<td align="right">3.747</td>
-<td align="right">2.339</td>
-<td align="right">1.602</td>
-<td align="right">0.109</td>
+<td align="right">0.019</td>
+<td align="right">0.013</td>
+<td align="right">1.516</td>
+<td align="right">0.130</td>
 </tr>
 <tr class="odd">
 <td align="left">raceNon-Hispanic Black</td>
-<td align="right">-6.587</td>
-<td align="right">1.742</td>
-<td align="right">-3.780</td>
+<td align="right">-0.038</td>
+<td align="right">0.009</td>
+<td align="right">-4.099</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">raceNon-Hispanic White</td>
-<td align="right">-2.485</td>
-<td align="right">1.592</td>
-<td align="right">-1.561</td>
-<td align="right">0.119</td>
+<td align="right">-0.015</td>
+<td align="right">0.009</td>
+<td align="right">-1.734</td>
+<td align="right">0.083</td>
 </tr>
 <tr class="odd">
 <td align="left">raceOther Race</td>
-<td align="right">1.625</td>
-<td align="right">2.790</td>
-<td align="right">0.583</td>
-<td align="right">0.560</td>
+<td align="right">0.010</td>
+<td align="right">0.015</td>
+<td align="right">0.699</td>
+<td align="right">0.485</td>
 </tr>
 <tr class="even">
 <td align="left">marital_statusNever married</td>
-<td align="right">-7.162</td>
-<td align="right">1.603</td>
-<td align="right">-4.468</td>
+<td align="right">-0.039</td>
+<td align="right">0.009</td>
+<td align="right">-4.587</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">1.997</td>
-<td align="right">1.454</td>
-<td align="right">1.374</td>
-<td align="right">0.170</td>
+<td align="right">0.012</td>
+<td align="right">0.008</td>
+<td align="right">1.504</td>
+<td align="right">0.133</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20College graduate or above</td>
-<td align="right">3.280</td>
-<td align="right">2.206</td>
-<td align="right">1.487</td>
-<td align="right">0.137</td>
+<td align="right">0.021</td>
+<td align="right">0.012</td>
+<td align="right">1.758</td>
+<td align="right">0.079</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20High school graduate/GED or
 equivalent</td>
-<td align="right">-1.813</td>
-<td align="right">2.090</td>
-<td align="right">-0.868</td>
-<td align="right">0.386</td>
+<td align="right">-0.009</td>
+<td align="right">0.011</td>
+<td align="right">-0.815</td>
+<td align="right">0.415</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20Less than 9th grade</td>
-<td align="right">5.571</td>
-<td align="right">3.079</td>
-<td align="right">1.810</td>
-<td align="right">0.070</td>
+<td align="right">0.031</td>
+<td align="right">0.017</td>
+<td align="right">1.852</td>
+<td align="right">0.064</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20Some college or AA degree</td>
-<td align="right">1.269</td>
-<td align="right">2.029</td>
-<td align="right">0.626</td>
-<td align="right">0.532</td>
+<td align="right">0.008</td>
+<td align="right">0.011</td>
+<td align="right">0.730</td>
+<td align="right">0.465</td>
 </tr>
 <tr class="even">
 <td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">2.430</td>
-<td align="right">1.399</td>
-<td align="right">1.737</td>
-<td align="right">0.083</td>
+<td align="right">0.014</td>
+<td align="right">0.008</td>
+<td align="right">1.881</td>
+<td align="right">0.060</td>
 </tr>
 <tr class="odd">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">2.820</td>
-<td align="right">1.757</td>
-<td align="right">1.605</td>
-<td align="right">0.108</td>
+<td align="right">0.017</td>
+<td align="right">0.009</td>
+<td align="right">1.760</td>
+<td align="right">0.078</td>
 </tr>
 </tbody>
 </table>
@@ -2308,10 +1622,10 @@ id="explanatory-variables-cotinine-physical_activity-and-alcohol_use_cat"
 class="section level3">
 <h3>4. explanatory variables: cotinine, physical_activity, and
 alcohol_use_cat</h3>
-<p>fit_full: total_cholesterol = cotinine + physical_activity +
+<p>fit_full: log(total_cholesterol) = cotinine + physical_activity +
 alcohol_use_cat + age + gender + race + marital_status +
 education_level_20 + poverty_level</p>
-<pre class="r"><code>fit_full = lm(total_cholesterol ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+<pre class="r"><code>fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_full |&gt; 
   broom::tidy() |&gt; 
@@ -2336,152 +1650,376 @@ fit_full |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">195.282</td>
-<td align="right">3.486</td>
-<td align="right">56.025</td>
+<td align="right">5.263</td>
+<td align="right">0.019</td>
+<td align="right">281.592</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">cotinine</td>
 <td align="right">0.000</td>
-<td align="right">0.004</td>
-<td align="right">0.110</td>
-<td align="right">0.912</td>
+<td align="right">0.000</td>
+<td align="right">-0.350</td>
+<td align="right">0.727</td>
 </tr>
 <tr class="odd">
 <td align="left">physical_activityModerate activity</td>
-<td align="right">1.171</td>
-<td align="right">1.511</td>
-<td align="right">0.775</td>
-<td align="right">0.439</td>
+<td align="right">0.007</td>
+<td align="right">0.008</td>
+<td align="right">0.822</td>
+<td align="right">0.411</td>
 </tr>
 <tr class="even">
 <td align="left">physical_activityVigorous activity</td>
-<td align="right">0.801</td>
-<td align="right">1.518</td>
-<td align="right">0.528</td>
-<td align="right">0.598</td>
+<td align="right">0.006</td>
+<td align="right">0.008</td>
+<td align="right">0.686</td>
+<td align="right">0.493</td>
 </tr>
 <tr class="odd">
 <td align="left">alcohol_use_catLight Drinker</td>
-<td align="right">-11.943</td>
-<td align="right">1.711</td>
-<td align="right">-6.978</td>
+<td align="right">-0.066</td>
+<td align="right">0.009</td>
+<td align="right">-7.220</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">alcohol_use_catModerate Drinker</td>
-<td align="right">-8.128</td>
-<td align="right">1.749</td>
-<td align="right">-4.647</td>
+<td align="right">-0.046</td>
+<td align="right">0.009</td>
+<td align="right">-4.889</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">age</td>
-<td align="right">0.075</td>
-<td align="right">0.039</td>
-<td align="right">1.921</td>
-<td align="right">0.055</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">1.070</td>
+<td align="right">0.285</td>
 </tr>
 <tr class="even">
 <td align="left">genderMale</td>
-<td align="right">-9.746</td>
-<td align="right">1.176</td>
-<td align="right">-8.289</td>
+<td align="right">-0.056</td>
+<td align="right">0.006</td>
+<td align="right">-8.936</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">raceNon-Hispanic Asian</td>
-<td align="right">3.676</td>
-<td align="right">2.347</td>
-<td align="right">1.566</td>
-<td align="right">0.117</td>
+<td align="right">0.019</td>
+<td align="right">0.013</td>
+<td align="right">1.510</td>
+<td align="right">0.131</td>
 </tr>
 <tr class="even">
 <td align="left">raceNon-Hispanic Black</td>
-<td align="right">-6.615</td>
-<td align="right">1.760</td>
-<td align="right">-3.759</td>
+<td align="right">-0.038</td>
+<td align="right">0.009</td>
+<td align="right">-4.008</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="odd">
 <td align="left">raceNon-Hispanic White</td>
-<td align="right">-2.562</td>
-<td align="right">1.617</td>
-<td align="right">-1.585</td>
-<td align="right">0.113</td>
+<td align="right">-0.015</td>
+<td align="right">0.009</td>
+<td align="right">-1.678</td>
+<td align="right">0.093</td>
 </tr>
 <tr class="even">
 <td align="left">raceOther Race</td>
-<td align="right">1.556</td>
-<td align="right">2.807</td>
-<td align="right">0.554</td>
-<td align="right">0.579</td>
+<td align="right">0.011</td>
+<td align="right">0.015</td>
+<td align="right">0.718</td>
+<td align="right">0.473</td>
 </tr>
 <tr class="odd">
 <td align="left">marital_statusNever married</td>
-<td align="right">-7.191</td>
-<td align="right">1.604</td>
-<td align="right">-4.483</td>
+<td align="right">-0.040</td>
+<td align="right">0.009</td>
+<td align="right">-4.601</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
 <td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">2.010</td>
-<td align="right">1.456</td>
-<td align="right">1.380</td>
-<td align="right">0.168</td>
+<td align="right">0.012</td>
+<td align="right">0.008</td>
+<td align="right">1.532</td>
+<td align="right">0.126</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20College graduate or above</td>
-<td align="right">3.231</td>
-<td align="right">2.230</td>
-<td align="right">1.449</td>
-<td align="right">0.147</td>
+<td align="right">0.020</td>
+<td align="right">0.012</td>
+<td align="right">1.648</td>
+<td align="right">0.100</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20High school graduate/GED or
 equivalent</td>
-<td align="right">-1.858</td>
-<td align="right">2.093</td>
-<td align="right">-0.888</td>
-<td align="right">0.375</td>
+<td align="right">-0.010</td>
+<td align="right">0.011</td>
+<td align="right">-0.857</td>
+<td align="right">0.391</td>
 </tr>
 <tr class="odd">
 <td align="left">education_level_20Less than 9th grade</td>
-<td align="right">5.550</td>
-<td align="right">3.084</td>
-<td align="right">1.799</td>
-<td align="right">0.072</td>
+<td align="right">0.030</td>
+<td align="right">0.017</td>
+<td align="right">1.820</td>
+<td align="right">0.069</td>
 </tr>
 <tr class="even">
 <td align="left">education_level_20Some college or AA degree</td>
-<td align="right">1.223</td>
-<td align="right">2.038</td>
-<td align="right">0.600</td>
-<td align="right">0.549</td>
+<td align="right">0.007</td>
+<td align="right">0.011</td>
+<td align="right">0.663</td>
+<td align="right">0.508</td>
 </tr>
 <tr class="odd">
 <td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">2.416</td>
-<td align="right">1.415</td>
-<td align="right">1.707</td>
-<td align="right">0.088</td>
+<td align="right">0.013</td>
+<td align="right">0.008</td>
+<td align="right">1.778</td>
+<td align="right">0.075</td>
 </tr>
 <tr class="even">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">2.836</td>
-<td align="right">1.758</td>
-<td align="right">1.613</td>
-<td align="right">0.107</td>
+<td align="right">0.017</td>
+<td align="right">0.009</td>
+<td align="right">1.752</td>
+<td align="right">0.080</td>
 </tr>
 </tbody>
 </table>
 </div>
+<div id="comparison-among-models-aic-还没改" class="section level3">
+<h3>5. Comparison among models: AIC (还没改)</h3>
+<pre class="r"><code>fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
+
+test_aic = stepAIC(fit_full, direction = &quot;both&quot;, trace = FALSE)
+
+summary(test_aic)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = log(total_cholesterol) ~ alcohol_use_cat + gender + 
+##     race + marital_status + education_level_20 + poverty_level, 
+##     data = model_df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.98018 -0.14515  0.00187  0.14798  0.92464 
+## 
+## Coefficients:
+##                                                           Estimate Std. Error
+## (Intercept)                                               5.276616   0.014518
+## alcohol_use_catLight Drinker                             -0.066035   0.009119
+## alcohol_use_catModerate Drinker                          -0.046470   0.009319
+## genderMale                                               -0.055600   0.006121
+## raceNon-Hispanic Asian                                    0.019256   0.012542
+## raceNon-Hispanic Black                                   -0.037329   0.009297
+## raceNon-Hispanic White                                   -0.013509   0.008446
+## raceOther Race                                            0.010565   0.014961
+## marital_statusNever married                              -0.042028   0.008227
+## marital_statusWidowed/Divorced/Separated                  0.013753   0.007551
+## education_level_20College graduate or above               0.020305   0.011820
+## education_level_20High school graduate/GED or equivalent -0.009487   0.011201
+## education_level_20Less than 9th grade                     0.031655   0.016478
+## education_level_20Some college or AA degree               0.007220   0.010858
+## poverty_levelBelow 185% of Poverty Guidelines             0.015045   0.007450
+## poverty_levelBetween 130% and 185% of Poverty Guidelines  0.017362   0.009389
+##                                                          t value Pr(&gt;|t|)    
+## (Intercept)                                              363.457  &lt; 2e-16 ***
+## alcohol_use_catLight Drinker                              -7.242 5.06e-13 ***
+## alcohol_use_catModerate Drinker                           -4.987 6.33e-07 ***
+## genderMale                                                -9.084  &lt; 2e-16 ***
+## raceNon-Hispanic Asian                                     1.535   0.1248    
+## raceNon-Hispanic Black                                    -4.015 6.02e-05 ***
+## raceNon-Hispanic White                                    -1.599   0.1098    
+## raceOther Race                                             0.706   0.4801    
+## marital_statusNever married                               -5.109 3.35e-07 ***
+## marital_statusWidowed/Divorced/Separated                   1.821   0.0686 .  
+## education_level_20College graduate or above                1.718   0.0859 .  
+## education_level_20High school graduate/GED or equivalent  -0.847   0.3971    
+## education_level_20Less than 9th grade                      1.921   0.0548 .  
+## education_level_20Some college or AA degree                0.665   0.5061    
+## poverty_levelBelow 185% of Poverty Guidelines              2.019   0.0435 *  
+## poverty_levelBetween 130% and 185% of Poverty Guidelines   1.849   0.0645 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2188 on 5393 degrees of freedom
+##   (2752 observations deleted due to missingness)
+## Multiple R-squared:  0.04106,    Adjusted R-squared:  0.0384 
+## F-statistic:  15.4 on 15 and 5393 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code># AIC result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code></pre>
+<ul>
+<li>Based on the output, we can find the best model optimized by
+comparing AIC value is
+<code>log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code>.
+However, we think variable age is an essential variable when studying
+health outcome, such as total cholesterol in this study. Therefore, we
+decide to add variable age into this model, and summary the final model
+for comparing is
+<code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
+which is the same as model <code>fit_alc</code>.</li>
+</ul>
+</div>
+<div id="backwawrd-selection-on-full-model" class="section level3">
+<h3>6. Backwawrd selection on full model</h3>
+<pre class="r"><code>fit_backward = step(fit_full, direction = &quot;backward&quot;)</code></pre>
+<pre><code>## Start:  AIC=-16415.57
+## log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + 
+##     age + gender + race + marital_status + education_level_20 + 
+##     poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## - physical_activity   2    0.0350 258.19 -16419
+## - cotinine            1    0.0059 258.16 -16417
+## - age                 1    0.0548 258.21 -16416
+## &lt;none&gt;                            258.16 -16416
+## - poverty_level       2    0.2038 258.36 -16415
+## - education_level_20  4    0.6827 258.84 -16409
+## - marital_status      2    1.3044 259.46 -16392
+## - race                4    1.5203 259.68 -16392
+## - alcohol_use_cat     2    2.5173 260.67 -16367
+## - gender              1    3.8255 261.98 -16338
+## 
+## Step:  AIC=-16418.83
+## log(total_cholesterol) ~ cotinine + alcohol_use_cat + age + gender + 
+##     race + marital_status + education_level_20 + poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## - cotinine            1    0.0067 258.20 -16421
+## - age                 1    0.0485 258.24 -16420
+## &lt;none&gt;                            258.19 -16419
+## - poverty_level       2    0.2075 258.40 -16418
+## - education_level_20  4    0.6884 258.88 -16412
+## - marital_status      2    1.2950 259.49 -16396
+## - race                4    1.5302 259.72 -16395
+## - alcohol_use_cat     2    2.5655 260.76 -16369
+## - gender              1    3.9007 262.09 -16340
+## 
+## Step:  AIC=-16420.69
+## log(total_cholesterol) ~ alcohol_use_cat + age + gender + race + 
+##     marital_status + education_level_20 + poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## - age                 1    0.0523 258.25 -16422
+## &lt;none&gt;                            258.20 -16421
+## - poverty_level       2    0.2172 258.42 -16420
+## - education_level_20  4    0.7140 258.91 -16414
+## - marital_status      2    1.2913 259.49 -16398
+## - race                4    1.5580 259.75 -16396
+## - alcohol_use_cat     2    2.5598 260.76 -16371
+## - gender              1    4.0009 262.20 -16340
+## 
+## Step:  AIC=-16421.6
+## log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + 
+##     education_level_20 + poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## &lt;none&gt;                            258.25 -16422
+## - poverty_level       2    0.2465 258.50 -16420
+## - education_level_20  4    0.7266 258.98 -16414
+## - race                4    1.5164 259.77 -16398
+## - marital_status      2    1.8116 260.06 -16388
+## - alcohol_use_cat     2    2.5279 260.78 -16373
+## - gender              1    3.9513 262.20 -16342</code></pre>
+<pre class="r"><code># backward result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code></pre>
+<ul>
+<li>Based on the output, we can find the best model optimized by
+backward selection summary for full model with log transfermation on y
+is
+<code>log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code>.
+However, we think variable age is an essential variable when studying
+health outcome, such as total cholesterol in this study. Therefore, we
+decide to add variable age into this model, and summary the final model
+for comparing is
+<code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
+which is the same as model <code>fit_alc</code>.</li>
+</ul>
+</div>
+<div id="stepwise-selection-on-full-model" class="section level3">
+<h3>7. Stepwise selection on full model</h3>
+<pre class="r"><code>fit_stepwise = step(fit_full)</code></pre>
+<pre><code>## Start:  AIC=-16415.57
+## log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + 
+##     age + gender + race + marital_status + education_level_20 + 
+##     poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## - physical_activity   2    0.0350 258.19 -16419
+## - cotinine            1    0.0059 258.16 -16417
+## - age                 1    0.0548 258.21 -16416
+## &lt;none&gt;                            258.16 -16416
+## - poverty_level       2    0.2038 258.36 -16415
+## - education_level_20  4    0.6827 258.84 -16409
+## - marital_status      2    1.3044 259.46 -16392
+## - race                4    1.5203 259.68 -16392
+## - alcohol_use_cat     2    2.5173 260.67 -16367
+## - gender              1    3.8255 261.98 -16338
+## 
+## Step:  AIC=-16418.83
+## log(total_cholesterol) ~ cotinine + alcohol_use_cat + age + gender + 
+##     race + marital_status + education_level_20 + poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## - cotinine            1    0.0067 258.20 -16421
+## - age                 1    0.0485 258.24 -16420
+## &lt;none&gt;                            258.19 -16419
+## - poverty_level       2    0.2075 258.40 -16418
+## - education_level_20  4    0.6884 258.88 -16412
+## - marital_status      2    1.2950 259.49 -16396
+## - race                4    1.5302 259.72 -16395
+## - alcohol_use_cat     2    2.5655 260.76 -16369
+## - gender              1    3.9007 262.09 -16340
+## 
+## Step:  AIC=-16420.69
+## log(total_cholesterol) ~ alcohol_use_cat + age + gender + race + 
+##     marital_status + education_level_20 + poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## - age                 1    0.0523 258.25 -16422
+## &lt;none&gt;                            258.20 -16421
+## - poverty_level       2    0.2172 258.42 -16420
+## - education_level_20  4    0.7140 258.91 -16414
+## - marital_status      2    1.2913 259.49 -16398
+## - race                4    1.5580 259.75 -16396
+## - alcohol_use_cat     2    2.5598 260.76 -16371
+## - gender              1    4.0009 262.20 -16340
+## 
+## Step:  AIC=-16421.6
+## log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + 
+##     education_level_20 + poverty_level
+## 
+##                      Df Sum of Sq    RSS    AIC
+## &lt;none&gt;                            258.25 -16422
+## - poverty_level       2    0.2465 258.50 -16420
+## - education_level_20  4    0.7266 258.98 -16414
+## - race                4    1.5164 259.77 -16398
+## - marital_status      2    1.8116 260.06 -16388
+## - alcohol_use_cat     2    2.5279 260.78 -16373
+## - gender              1    3.9513 262.20 -16342</code></pre>
+<pre class="r"><code># stepwise result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code></pre>
+<ul>
+<li>Based on the output, we can find the best model optimized by
+stepwise selection summary for full model with log transfermation on y
+is
+<code>log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code>.
+However, we think variable age is an essential variable when studying
+health outcome, such as total cholesterol in this study. Therefore, we
+decide to add variable age into this model, and summary the final model
+for comparing is
+<code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
+which is the same as model <code>fit_alc</code>.</li>
+</ul>
+</div>
 <div id="comparison-among-models-cross-validation"
 class="section level3">
-<h3>5. Comparison among models: cross validation</h3>
+<h3>8. Comparison among models: cross validation</h3>
+<p>Based on the above steps, we now are comparing four models: fit_cot,
+fit_phy, fit_alc, and fit_full.</p>
 <pre class="r"><code>model_cv_df = 
   model_df |&gt; 
   mutate(
@@ -2492,7 +2030,7 @@ class="section level3">
 # create training and testing sets
 cv_df =
   model_cv_df |&gt; 
-  crossv_mc(n = 1000) |&gt; 
+  crossv_mc(n = 100) |&gt; 
   mutate(
     train = map(train, as_tibble),
     test = map(test, as_tibble)
@@ -2501,10 +2039,10 @@ cv_df =
 cv_results =
   cv_df |&gt; 
   mutate(
-    fit_cot = map(train, \(df) lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
-    fit_phy = map(train, \(df) lm(total_cholesterol ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
-    fit_alc = map(train, \(df) lm(total_cholesterol ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
-    fit_full = map(train, \(df) lm(total_cholesterol ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = df))
+    fit_cot = map(train, \(df) lm(log(total_cholesterol) ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
+    fit_phy = map(train, \(df) lm(log(total_cholesterol) ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
+    fit_alc = map(train, \(df) lm(log(total_cholesterol) ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = df)),
+    fit_full = map(train, \(df) lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = df))
   ) |&gt; 
   mutate(
     rmse_fit_cot = map2_dbl(fit_cot, test, \(model, df) rmse(model, df)),
@@ -2514,7 +2052,7 @@ cv_results =
   )
 
 cv_results |&gt; 
-  select(starts_with(&quot;rmse&quot;)) |&gt; 
+  dplyr::select(starts_with(&quot;rmse&quot;)) |&gt; 
   pivot_longer(
     everything(),
     names_to = &quot;model_type&quot;,
@@ -2523,530 +2061,61 @@ cv_results |&gt;
   ) |&gt; 
   ggplot(aes(x = model_type, y = rmse)) + geom_violin()</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-17-1.png" width="90%" /></p>
+<ul>
+<li>Based on the violin plot, these four models have similar spread of
+rmses.</li>
+</ul>
 </div>
 <div id="comparison-among-models-r-square" class="section level3">
 <h3>6. Comparison among models: r square</h3>
-<pre class="r"><code>rsquare(fit_cot, data = model_df)</code></pre>
-<pre><code>## [1] 0.01484233</code></pre>
-<pre class="r"><code>rsquare(fit_phy, data = model_df)</code></pre>
-<pre><code>## [1] 0.0150425</code></pre>
-<pre class="r"><code>rsquare(fit_alc, data = model_df)</code></pre>
-<pre><code>## [1] 0.01311945</code></pre>
-<pre class="r"><code>rsquare(fit_full, data = model_df)</code></pre>
-<pre><code>## [1] 0.01323167</code></pre>
-</div>
-</div>
-</div>
-<div id="drafts" class="section level1">
-<h1>drafts</h1>
-<div id="test-for-logistic-model" class="section level3">
-<h3>test for logistic model</h3>
-<pre class="r"><code>model_cv_log_df = 
-  model_df |&gt; 
-  mutate(
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2)),
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2)),
-    physical_activity = as.numeric(physical_activity),
-    alcohol_use_cat = as.numeric(alcohol_use_cat)
-    )
+<pre class="r"><code>rsquare_fit_cot = rsquare(fit_cot, data = model_df)
+rsquare_fit_phy = rsquare(fit_phy, data = model_df)
+rsquare_fit_alc = rsquare(fit_alc, data = model_df)
+rsquare_fit_full = rsquare(fit_full, data = model_df)
 
-log_fit_cot = glm(chol_cat ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
-
-log_fit_phy = glm(chol_cat ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
-
-log_fit_alc = glm(chol_cat ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
-
-log_fit_full = glm(chol_cat ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())
-
-# r^2
-rsquare(log_fit_cot, data = model_cv_log_df)</code></pre>
-<pre><code>## [1] -0.2908566</code></pre>
-<pre class="r"><code>rsquare(log_fit_phy, data = model_cv_log_df)</code></pre>
-<pre><code>## [1] -0.2915931</code></pre>
-<pre class="r"><code>rsquare(log_fit_alc, data = model_cv_log_df)</code></pre>
-<pre><code>## [1] -0.3731137</code></pre>
-<pre class="r"><code>rsquare(log_fit_full, data = model_cv_log_df)</code></pre>
-<pre><code>## [1] -0.3737993</code></pre>
-<pre class="r"><code># rmse
-
-# create training and testing sets
-cv_log_df =
-  model_cv_log_df |&gt; 
-  crossv_mc(n = 100) |&gt; 
-  mutate(
-    train = map(train, as_tibble),
-    test = map(test, as_tibble)
-  )
-
-cv_log_results =
-  cv_log_df |&gt; 
-  mutate(
-    log_fit_cot = map(train, \(df) glm(chol_cat ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())),
-    log_fit_phy = map(train, \(df) glm(chol_cat ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())),
-    log_fit_alc = map(train, \(df) glm(chol_cat ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial())),
-    log_fit_full = map(train, \(df) glm(chol_cat ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_cv_log_df, family = binomial()))
-  ) |&gt; 
-  mutate(
-    rmse_log_fit_cot = map2_dbl(log_fit_cot, test, \(model, df) rmse(model, df)),
-    rmse_log_fit_phy = map2_dbl(log_fit_phy, test, \(model, df) rmse(model, df)),
-    rmse_log_fit_alc = map2_dbl(log_fit_alc, test, \(model, df) rmse(model, df)),
-    rmse_log_fit_full = map2_dbl(log_fit_full, test, \(model, df) rmse(model, df))
-  )
-
-cv_log_results |&gt; 
-  select(starts_with(&quot;rmse&quot;)) |&gt; 
-  pivot_longer(
-    everything(),
-    names_to = &quot;model_type&quot;,
-    values_to = &quot;rmse&quot;,
-    names_prefix = &quot;rmse_log_&quot;
-  ) |&gt; 
-  ggplot(aes(x = model_type, y = rmse)) + geom_violin()</code></pre>
-<p><img src="model_files/figure-html/unnamed-chunk-19-1.png" width="90%" /></p>
-<div id="logistic" class="section level5">
-<h5>logistic</h5>
-<p>x = cotinine</p>
-<pre class="r"><code>fit1 = glm(chol_cat ~ cotinine, data = model_df, family = binomial())
-
-fit1 |&gt; 
-  broom::tidy() |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-0.71</td>
-<td align="right">0.026</td>
-<td align="right">-27.604</td>
-<td align="right">0.00</td>
-</tr>
-<tr class="even">
-<td align="left">cotinine</td>
-<td align="right">0.00</td>
-<td align="right">0.000</td>
-<td align="right">-2.166</td>
-<td align="right">0.03</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>fit2 = glm(chol_cat ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, family = binomial(), data = model_df)
-
-fit3 = glm(chol_cat ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = model_df, family = binomial())
-
-fit3 |&gt; 
-  broom::tidy() |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="60%" />
-<col width="9%" />
-<col width="10%" />
-<col width="10%" />
-<col width="8%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">-0.581</td>
-<td align="right">0.182</td>
-<td align="right">-3.187</td>
-<td align="right">0.001</td>
-</tr>
-<tr class="even">
-<td align="left">cotinine</td>
-<td align="right">0.000</td>
-<td align="right">0.000</td>
-<td align="right">0.480</td>
-<td align="right">0.631</td>
-</tr>
-<tr class="odd">
-<td align="left">age</td>
-<td align="right">0.008</td>
-<td align="right">0.002</td>
-<td align="right">3.999</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">genderMale</td>
-<td align="right">-0.345</td>
-<td align="right">0.062</td>
-<td align="right">-5.557</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic Asian</td>
-<td align="right">0.206</td>
-<td align="right">0.120</td>
-<td align="right">1.725</td>
-<td align="right">0.085</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic Black</td>
-<td align="right">-0.285</td>
-<td align="right">0.093</td>
-<td align="right">-3.047</td>
-<td align="right">0.002</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic White</td>
-<td align="right">-0.125</td>
-<td align="right">0.084</td>
-<td align="right">-1.489</td>
-<td align="right">0.136</td>
-</tr>
-<tr class="even">
-<td align="left">raceOther Race</td>
-<td align="right">0.183</td>
-<td align="right">0.144</td>
-<td align="right">1.270</td>
-<td align="right">0.204</td>
-</tr>
-<tr class="odd">
-<td align="left">marital_statusNever married</td>
-<td align="right">-0.341</td>
-<td align="right">0.089</td>
-<td align="right">-3.847</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">0.061</td>
-<td align="right">0.075</td>
-<td align="right">0.821</td>
-<td align="right">0.412</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20College graduate or above</td>
-<td align="right">0.077</td>
-<td align="right">0.117</td>
-<td align="right">0.661</td>
-<td align="right">0.509</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20High school graduate/GED or
-equivalent</td>
-<td align="right">-0.091</td>
-<td align="right">0.111</td>
-<td align="right">-0.820</td>
-<td align="right">0.412</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20Less than 9th grade</td>
-<td align="right">0.190</td>
-<td align="right">0.159</td>
-<td align="right">1.192</td>
-<td align="right">0.233</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20Some college or AA degree</td>
-<td align="right">0.031</td>
-<td align="right">0.108</td>
-<td align="right">0.287</td>
-<td align="right">0.774</td>
-</tr>
-<tr class="odd">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.133</td>
-<td align="right">0.075</td>
-<td align="right">1.773</td>
-<td align="right">0.076</td>
-</tr>
-<tr class="even">
-<td align="left">poverty_levelBetween 130% and 185% of Poverty
-Guidelines</td>
-<td align="right">0.145</td>
-<td align="right">0.093</td>
-<td align="right">1.562</td>
-<td align="right">0.118</td>
-</tr>
-<tr class="odd">
-<td align="left">physical_activityModerate activity</td>
-<td align="right">0.052</td>
-<td align="right">0.079</td>
-<td align="right">0.663</td>
-<td align="right">0.507</td>
-</tr>
-<tr class="even">
-<td align="left">physical_activityVigorous activity</td>
-<td align="right">0.014</td>
-<td align="right">0.080</td>
-<td align="right">0.181</td>
-<td align="right">0.856</td>
-</tr>
-<tr class="odd">
-<td align="left">alcohol_use_catLight Drinker</td>
-<td align="right">-0.494</td>
-<td align="right">0.088</td>
-<td align="right">-5.607</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">alcohol_use_catModerate Drinker</td>
-<td align="right">-0.302</td>
-<td align="right">0.089</td>
-<td align="right">-3.377</td>
-<td align="right">0.001</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="test-for-stratified-linear-regression" class="section level5">
-<h5>test for stratified linear regression</h5>
-<pre class="r"><code>test_df =
-  model_df |&gt; 
-  filter(gender == &quot;Male&quot;)
-
-fit_2 = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = model_df)
-
-fit_2 |&gt; 
-  broom::tidy() |&gt; 
-  knitr::kable(digits = 3)</code></pre>
-<table>
-<colgroup>
-<col width="60%" />
-<col width="9%" />
-<col width="10%" />
-<col width="10%" />
-<col width="8%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="left">term</th>
-<th align="right">estimate</th>
-<th align="right">std.error</th>
-<th align="right">statistic</th>
-<th align="right">p.value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left">(Intercept)</td>
-<td align="right">195.282</td>
-<td align="right">3.486</td>
-<td align="right">56.025</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">cotinine</td>
-<td align="right">0.000</td>
-<td align="right">0.004</td>
-<td align="right">0.110</td>
-<td align="right">0.912</td>
-</tr>
-<tr class="odd">
-<td align="left">age</td>
-<td align="right">0.075</td>
-<td align="right">0.039</td>
-<td align="right">1.921</td>
-<td align="right">0.055</td>
-</tr>
-<tr class="even">
-<td align="left">genderMale</td>
-<td align="right">-9.746</td>
-<td align="right">1.176</td>
-<td align="right">-8.289</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic Asian</td>
-<td align="right">3.676</td>
-<td align="right">2.347</td>
-<td align="right">1.566</td>
-<td align="right">0.117</td>
-</tr>
-<tr class="even">
-<td align="left">raceNon-Hispanic Black</td>
-<td align="right">-6.615</td>
-<td align="right">1.760</td>
-<td align="right">-3.759</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="odd">
-<td align="left">raceNon-Hispanic White</td>
-<td align="right">-2.562</td>
-<td align="right">1.617</td>
-<td align="right">-1.585</td>
-<td align="right">0.113</td>
-</tr>
-<tr class="even">
-<td align="left">raceOther Race</td>
-<td align="right">1.556</td>
-<td align="right">2.807</td>
-<td align="right">0.554</td>
-<td align="right">0.579</td>
-</tr>
-<tr class="odd">
-<td align="left">marital_statusNever married</td>
-<td align="right">-7.191</td>
-<td align="right">1.604</td>
-<td align="right">-4.483</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">marital_statusWidowed/Divorced/Separated</td>
-<td align="right">2.010</td>
-<td align="right">1.456</td>
-<td align="right">1.380</td>
-<td align="right">0.168</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20College graduate or above</td>
-<td align="right">3.231</td>
-<td align="right">2.230</td>
-<td align="right">1.449</td>
-<td align="right">0.147</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20High school graduate/GED or
-equivalent</td>
-<td align="right">-1.858</td>
-<td align="right">2.093</td>
-<td align="right">-0.888</td>
-<td align="right">0.375</td>
-</tr>
-<tr class="odd">
-<td align="left">education_level_20Less than 9th grade</td>
-<td align="right">5.550</td>
-<td align="right">3.084</td>
-<td align="right">1.799</td>
-<td align="right">0.072</td>
-</tr>
-<tr class="even">
-<td align="left">education_level_20Some college or AA degree</td>
-<td align="right">1.223</td>
-<td align="right">2.038</td>
-<td align="right">0.600</td>
-<td align="right">0.549</td>
-</tr>
-<tr class="odd">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">2.416</td>
-<td align="right">1.415</td>
-<td align="right">1.707</td>
-<td align="right">0.088</td>
-</tr>
-<tr class="even">
-<td align="left">poverty_levelBetween 130% and 185% of Poverty
-Guidelines</td>
-<td align="right">2.836</td>
-<td align="right">1.758</td>
-<td align="right">1.613</td>
-<td align="right">0.107</td>
-</tr>
-<tr class="odd">
-<td align="left">physical_activityModerate activity</td>
-<td align="right">1.171</td>
-<td align="right">1.511</td>
-<td align="right">0.775</td>
-<td align="right">0.439</td>
-</tr>
-<tr class="even">
-<td align="left">physical_activityVigorous activity</td>
-<td align="right">0.801</td>
-<td align="right">1.518</td>
-<td align="right">0.528</td>
-<td align="right">0.598</td>
-</tr>
-<tr class="odd">
-<td align="left">alcohol_use_catLight Drinker</td>
-<td align="right">-11.943</td>
-<td align="right">1.711</td>
-<td align="right">-6.978</td>
-<td align="right">0.000</td>
-</tr>
-<tr class="even">
-<td align="left">alcohol_use_catModerate Drinker</td>
-<td align="right">-8.128</td>
-<td align="right">1.749</td>
-<td align="right">-4.647</td>
-<td align="right">0.000</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="test-for-bin-cat-cotinine-level" class="section level5">
-<h5>test for bin / cat cotinine level</h5>
-<pre class="r"><code>test_df = 
-  model_df |&gt; 
-  mutate(
-    coti_cat = ifelse(cotinine &lt;= 10, 0, ifelse(cotinine &gt; 10 &amp; cotinine &lt; 500, 1, 2))
-  )
-
-fit_2 = lm(total_cholesterol ~ coti_cat + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = test_df) |&gt; 
-  broom::tidy() |&gt; 
+cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |&gt; 
   knitr::kable()</code></pre>
-<p>binary &amp; categorial: neither sig</p>
+<table>
+<thead>
+<tr class="header">
+<th align="right">rsquare_fit_cot</th>
+<th align="right">rsquare_fit_phy</th>
+<th align="right">rsquare_fit_alc</th>
+<th align="right">rsquare_fit_full</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.0280454</td>
+<td align="right">0.0282958</td>
+<td align="right">0.0287445</td>
+<td align="right">0.0289015</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Based on the violin plot, these four models have similar r square
+values.</li>
+</ul>
 </div>
-<div id="test-for-x-and-covariables" class="section level5">
-<h5>test for x and covariables</h5>
-<pre class="r"><code>model_df |&gt; 
-  filter(!is.na(alcohol_use_cat)) |&gt; 
-  mutate(
-    alcohol_use_cat = ifelse(alcohol_use_cat == &quot;Light Drinker&quot;, 0, ifelse(alcohol_use_cat == &quot;Moderate Drinker&quot;, 1, 2)),
-    physical_activity = ifelse(physical_activity == &quot;Light/Unknown activity&quot;, 0, ifelse(physical_activity == &quot;Moderate activity&quot;, 1, 2)),
-    alcohol_use_cat = as.numeric(alcohol_use_cat)
-  ) |&gt; 
-  select(cotinine, alcohol_use_cat, physical_activity) |&gt; 
-  cor() |&gt; 
-  corrplot()</code></pre>
-<p><img src="model_files/figure-html/unnamed-chunk-23-1.png" width="90%" /></p>
-</div>
-<div id="test-for-multicolinearity-linear-model" class="section level5">
-<h5>test for multicolinearity (linear model)</h5>
-<pre class="r"><code>test_vif = 
-  model_df |&gt; 
-  select(total_cholesterol, age, cotinine, gender, race, marital_status, education_level_20, poverty_level, physical_activity, alcohol_use_cat)
-
-fit_vif = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = test_vif)
-
-car::vif(fit_vif)</code></pre>
-<pre><code>##                        GVIF Df GVIF^(1/(2*Df))
-## cotinine           1.138405  1        1.066961
-## age                1.467309  1        1.211325
-## gender             1.122190  1        1.059335
-## race               1.365912  4        1.039747
-## marital_status     1.367480  2        1.081385
-## education_level_20 1.480493  4        1.050270
-## poverty_level      1.299660  2        1.067720
-## physical_activity  1.189170  2        1.044266
-## alcohol_use_cat    1.122676  2        1.029351</code></pre>
-<p>VIF = 1: There is no correlation between a given predictor variable
-and any other predictor variables in the model. VIF between 1 and 5:
-There is moderate correlation between a given predictor variable and
-other predictor variables in the model. VIF &gt; 5: There is severe
-correlation between a given predictor variable and other predictor
-variables in the model.</p>
-</div>
-<div id="test-for-heteroscedasticity-linearmodel"
-class="section level5">
-<h5>test for heteroscedasticity (linearmodel)</h5>
-<pre class="r"><code>fit_vif = lm(total_cholesterol ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level + physical_activity + alcohol_use_cat, data = test_vif)
-
-test_vif |&gt; 
-  add_residuals(fit_vif) |&gt; 
-  ggplot(aes(y = resid, x = cotinine)) + geom_point(col = &#39;blue&#39;) + geom_abline(slope = 0)</code></pre>
-<pre><code>## Warning: Removed 2752 rows containing missing values (`geom_point()`).</code></pre>
-<p><img src="model_files/figure-html/unnamed-chunk-25-1.png" width="90%" />
-there is a trend –&gt; when x=cotinine, there is a prob of
-heteroscedasticity.</p>
+<div id="conclusion" class="section level3">
+<h3>Conclusion</h3>
+<p>Based on the above model selection steps, we decide to use model
+<code>fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>
+as our final model.</p>
+<ul>
+<li>Backward, stepwise, AIC value methods all indicate that
+<code>fit_alc</code> is the best.</li>
+<li>With similar rmse distribution and r square, model
+<code>fit_alc</code> is less complex than model
+<code>fit_full</code>.</li>
+<li>Then, we save this model as a RDS file for the following R shiny
+part.</li>
+</ul>
+<pre class="r"><code>save_path = &quot;fit_alc.rds&quot;
+saveRDS(fit_alc, save_path)
+cat(&quot;Model saved as an RDS file:&quot;, save_path, &quot;\n&quot;)</code></pre>
+<pre><code>## Model saved as an RDS file: fit_alc.rds</code></pre>
 </div>
 </div>
 </div>
