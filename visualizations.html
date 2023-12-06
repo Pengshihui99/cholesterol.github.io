@@ -9,7 +9,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Yuxuan Wang &amp; Jiangyuan Zhu" />
 
 
 <title>Visualizations</title>
@@ -37,6 +36,13 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.3/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
 <link href="site_libs/font-awesome-6.4.2/css/all.min.css" rel="stylesheet" />
 <link href="site_libs/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet" />
 
@@ -361,7 +367,6 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Visualizations</h1>
-<h4 class="author">Yuxuan Wang &amp; Jiangyuan Zhu</h4>
 
 </div>
 
@@ -381,6 +386,33 @@ combine_tc_binary = read_csv(&quot;data/combine.csv&quot;) |&gt;
       TRUE ~ as.character(total_cholesterol)
     )
   )</code></pre>
+<div id="labeling-the-bar-chart-representing-total-cholesterol"
+class="section level3">
+<h3><strong>Labeling the bar chart representing Total
+Cholesterol</strong></h3>
+<pre class="r"><code>TC_distri = ggplot(combine_df, aes(x = total_cholesterol)) +
+  geom_histogram(fill = &quot;skyblue&quot;, color = &quot;black&quot;, alpha = 0.7) +
+  labs(
+    x = &quot;Total Cholesterol&quot;,
+    title = &quot;Distribution of Total Cholesterol&quot;
+  ) +
+  theme_minimal()
+
+ggplotly(TC_distri)</code></pre>
+<div class="plotly html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-a52b2838a135331581d4" style="width:672px;height:480px;"></div>
+<script type="application/json" data-for="htmlwidget-a52b2838a135331581d4">{"x":{"data":[{"orientation":"v","width":[12.931034482758612,12.931034482758605,12.931034482758605,12.931034482758633,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758662,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758633,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605,12.931034482758605],"base":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"x":[64.65517241379311,77.586206896551715,90.517241379310349,103.44827586206897,116.37931034482759,129.31034482758622,142.24137931034483,155.17241379310343,168.10344827586209,181.0344827586207,193.9655172413793,206.89655172413794,219.82758620689657,232.75862068965517,245.68965517241378,258.62068965517244,271.55172413793105,284.48275862068965,297.41379310344826,310.34482758620692,323.27586206896552,336.20689655172413,349.13793103448273,362.06896551724139,375,387.93103448275861,400.86206896551721,413.79310344827587,426.72413793103448,439.65517241379308],"y":[1,10,25,89,242,448,710,947,1057,1068,987,753,631,440,279,188,112,64,48,24,12,10,4,3,4,1,0,1,2,1],"text":["count:    1<br />total_cholesterol:  64.65517","count:   10<br />total_cholesterol:  77.58621","count:   25<br />total_cholesterol:  90.51724","count:   89<br />total_cholesterol: 103.44828","count:  242<br />total_cholesterol: 116.37931","count:  448<br />total_cholesterol: 129.31034","count:  710<br />total_cholesterol: 142.24138","count:  947<br />total_cholesterol: 155.17241","count: 1057<br />total_cholesterol: 168.10345","count: 1068<br />total_cholesterol: 181.03448","count:  987<br />total_cholesterol: 193.96552","count:  753<br />total_cholesterol: 206.89655","count:  631<br />total_cholesterol: 219.82759","count:  440<br />total_cholesterol: 232.75862","count:  279<br />total_cholesterol: 245.68966","count:  188<br />total_cholesterol: 258.62069","count:  112<br />total_cholesterol: 271.55172","count:   64<br />total_cholesterol: 284.48276","count:   48<br />total_cholesterol: 297.41379","count:   24<br />total_cholesterol: 310.34483","count:   12<br />total_cholesterol: 323.27586","count:   10<br />total_cholesterol: 336.20690","count:    4<br />total_cholesterol: 349.13793","count:    3<br />total_cholesterol: 362.06897","count:    4<br />total_cholesterol: 375.00000","count:    1<br />total_cholesterol: 387.93103","count:    0<br />total_cholesterol: 400.86207","count:    1<br />total_cholesterol: 413.79310","count:    2<br />total_cholesterol: 426.72414","count:    1<br />total_cholesterol: 439.65517"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(135,206,235,0.7)","line":{"width":1.8897637795275593,"color":"rgba(0,0,0,1)"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":43.762557077625573,"r":7.3059360730593621,"b":40.182648401826491,"l":43.105022831050235},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"title":{"text":"Distribution of Total Cholesterol","font":{"color":"rgba(0,0,0,1)","family":"","size":17.534246575342465},"x":0,"xref":"paper"},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[38.793103448275872,465.51724137931029],"tickmode":"array","ticktext":["100","200","300","400"],"tickvals":[100,200,300,400],"categoryorder":"array","categoryarray":["100","200","300","400"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Total Cholesterol","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-53.400000000000006,1121.4000000000001],"tickmode":"array","ticktext":["0","300","600","900"],"tickvals":[7.1054273576010019e-15,300,600,900],"categoryorder":"array","categoryarray":["0","300","600","900"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"count","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"214410b36dbc":{"x":{},"type":"bar"}},"cur_data":"214410b36dbc","visdat":{"214410b36dbc":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>The presented data illustrates the distribution of
+<code>Total Cholesterol</code>, revealing a notable <em>right-skewed
+graph</em>. This skewness is indicative of a pronounced prevalence of
+participants whose cholesterol levels are concentrated within the range
+of 130 to 200 mg/dL.</p>
+<p>Specifically, a substantial number of individuals exhibit cholesterol
+values within this interval, emphasizing the central tendency of the
+data around these values. The rightward skewness further implies that
+there are fewer participants with cholesterol levels exceeding 200
+mg/dL, suggesting an asymmetry in the upper tail of the
+distribution.</p>
+</div>
 
 
 

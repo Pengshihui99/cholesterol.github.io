@@ -1,6 +1,5 @@
 ---
 title: "Visualizations"
-author: "Yuxuan Wang & Jiangyuan Zhu"
 output: 
   html_document:
     toc: true
@@ -26,4 +25,20 @@ combine_tc_binary = read_csv("data/combine.csv") |>
   )
 ```
 
+### **Labeling the bar chart representing Total Cholesterol**
 
+```{r, message = FALSE}
+TC_distri = ggplot(combine_df, aes(x = total_cholesterol)) +
+  geom_histogram(fill = "skyblue", color = "black", alpha = 0.7) +
+  labs(
+    x = "Total Cholesterol",
+    title = "Distribution of Total Cholesterol"
+  ) +
+  theme_minimal()
+
+ggplotly(TC_distri)
+```
+
+The presented data illustrates the distribution of `Total Cholesterol`, revealing a notable *right-skewed graph*. This skewness is indicative of a pronounced prevalence of participants whose cholesterol levels are concentrated within the range of 130 to 200 mg/dL. 
+
+Specifically, a substantial number of individuals exhibit cholesterol values within this interval, emphasizing the central tendency of the data around these values. The rightward skewness further implies that there are fewer participants with cholesterol levels exceeding 200 mg/dL, suggesting an asymmetry in the upper tail of the distribution. 
