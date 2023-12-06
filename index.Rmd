@@ -16,5 +16,5 @@ output:
 ```
 
 
-[Prevalence EDA](eda.html)
-
+* [Prevalence EDA](eda.html)
+* [Exploratory Analysis](Exploratory-Analysis.html)

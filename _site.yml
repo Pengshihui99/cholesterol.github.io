@@ -5,6 +5,8 @@ navbar:
   right:
     - text: "EDA"
       href: eda.html
+    - text: "Exploratory Analysis"
+      href: Exploratory-Analysis.html
     - icon: fa-envelope fa-lg
       href: mailto:rx2236@columbia.edu
     - icon: fa-github fa-lg
