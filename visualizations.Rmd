@@ -1,0 +1,29 @@
+---
+title: "Visualizations"
+author: "Yuxuan Wang & Jiangyuan Zhu"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+
+Load packages and import datasets.
+```{r, message = FALSE}
+library(ggridges)
+library(tidyverse)
+library(plotly)
+
+combine_df = read_csv("data/combine.csv") 
+
+combine_tc_binary = read_csv("data/combine.csv") |> 
+  mutate(
+    total_cholesterol = case_when(
+      total_cholesterol < 200 ~ "desirable",
+      total_cholesterol >= 200 ~ "above desirable",
+      TRUE ~ as.character(total_cholesterol)
+    )
+  )
+```
+
+
