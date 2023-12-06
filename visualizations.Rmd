@@ -25,7 +25,7 @@ combine_tc_binary = read_csv("data/combine.csv") |>
   )
 ```
 
-### **Labeling the bar chart representing Total Cholesterol**
+## Labeling the bar chart representing **Total Cholesterol**
 
 ```{r, message = FALSE}
 TC_distri = ggplot(combine_df, aes(x = total_cholesterol)) +
@@ -44,7 +44,7 @@ The presented data illustrates the distribution of `Total Cholesterol`, revealin
 
 Specifically, a substantial number of individuals exhibit cholesterol values within this interval, emphasizing the central tendency of the data around these values. The rightward skewness further implies that there are fewer participants with cholesterol levels exceeding 200 mg/dL, suggesting an asymmetry in the upper tail of the distribution. 
 
-### **Labeling the graph for Sleep Hours & Total Cholesterol**
+## Labeling the graph for **Sleep Hours** & Total Cholesterol
 
 ```{r, message = FALSE, warning = FALSE}
 sleep_hour_distri = ggplot(combine_df, aes(x = sleep_hour)) +
@@ -72,3 +72,26 @@ The distribution of `Sleep Hours` depicted above exhibits characteristics consis
 The presented *boxplot* visually represents the distribution of `Sleep Hours` in conjunction with `Total Cholesterol` levels*, revealing a remarkable similarity in distribution patterns between the group categorized as "desirable" and those classified as "above desirable". This observation suggests that individuals within both categories exhibit comparable trends in sleep duration.
 
 *`Total Cholesterol` levels: total blood cholesterol ≥ 200 mg/dL is defined as above desirable (CDC, 2023).
+
+## Labeling the bar chart representing **Physical Actively** & Total Cholesterol
+
+```{r, message = FALSE, warning = FALSE}
+combine_tc_binary = 
+  combine_tc_binary |> 
+  drop_na(physical_activity)
+
+TC_activity = ggplot(combine_tc_binary, aes(x = physical_activity, fill = total_cholesterol)) +
+  geom_bar(position = "stack") +
+  scale_fill_brewer(palette = "lightgray") +
+  labs(
+    x = "Physical Activity",
+    y = "Frequency",
+    fill = "Total Cholesterol",
+    title = "Relationship between Physical Activity and Total Cholesterol"
+  ) +
+  theme_minimal()
+
+ggplotly(TC_activity)
+```
+
+The above bar chart illustrates the association between `Physical Activity` and `Total Cholesterol`. It reveals that the majority of individuals engage in vigorous physical activity. Surprisingly, the prevalence of individuals with Total Cholesterol levels above the desirable range remains consistent across three distinct levels of Physical Activity. 
