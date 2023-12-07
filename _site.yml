@@ -5,12 +5,24 @@ navbar:
   right:
     - text: "EDA"
       href: eda.html
-    - text: "Exploratory Analysis"
+    - text: "Modeling"
+      menu:
+        - text: "Clean Data"
+          href: clean.html
+        - text: "Exploratory Analysis"
+          href: Exploratory-Analysis.html
+        - text: "Build Model"
+          href: model.html
+    - text: "Project Report"
       href: Exploratory-Analysis.html
     - icon: fa-envelope fa-lg
-      href: mailto:rx2236@columbia.edu
+      menu:
+        - text: "Ruiqi Xue"
+          href: mailto:rx2236@columbia.edu
     - icon: fa-github fa-lg
-      href: http://github.com/RuiqiXue126/
+      menu: 
+        - text: "Ruiqi Xue"
+          href: http://github.com/RuiqiXue126/
       
 output:
   html_document:

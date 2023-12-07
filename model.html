@@ -332,17 +332,52 @@ div.tocify {
         <li>
   <a href="eda.html">EDA</a>
 </li>
-<li>
-  <a href="mailto:rx2236@columbia.edu">
-    <span class="fa fa-envelope fa-lg"></span>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Modeling
      
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="clean.html">Clean Data</a>
+    </li>
+    <li>
+      <a href="Exploratory-Analysis.html">Exploratory Analysis</a>
+    </li>
+    <li>
+      <a href="model.html">Build Model</a>
+    </li>
+  </ul>
 </li>
 <li>
-  <a href="http://github.com/RuiqiXue126/">
+  <a href="Exploratory-Analysis.html">Project Report</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mailto:rx2236@columbia.edu">Ruiqi Xue</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     <span class="fa fa-github fa-lg"></span>
      
+     
+    <span class="caret"></span>
   </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="http://github.com/RuiqiXue126/">Ruiqi Xue</a>
+    </li>
+  </ul>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -880,7 +915,7 @@ cat_des_df</code></pre>
 <td align="right">0.220</td>
 </tr>
 <tr class="even">
-<td align="left">Below 185% of Poverty Guidelines</td>
+<td align="left">Above 185% of Poverty Guidelines</td>
 <td align="right">3388</td>
 <td align="right">0.525</td>
 <td align="right">0.000</td>
@@ -1061,9 +1096,9 @@ fit_cot |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">5.209</td>
-<td align="right">0.014</td>
-<td align="right">370.819</td>
+<td align="right">5.221</td>
+<td align="right">0.015</td>
+<td align="right">354.487</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
@@ -1159,19 +1194,19 @@ equivalent</td>
 <td align="right">0.314</td>
 </tr>
 <tr class="odd">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.013</td>
+<td align="left">poverty_levelBelow 130% of Poverty Guidelines</td>
+<td align="right">-0.013</td>
 <td align="right">0.007</td>
-<td align="right">1.811</td>
+<td align="right">-1.811</td>
 <td align="right">0.070</td>
 </tr>
 <tr class="even">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">0.011</td>
-<td align="right">0.009</td>
-<td align="right">1.245</td>
-<td align="right">0.213</td>
+<td align="right">-0.002</td>
+<td align="right">0.008</td>
+<td align="right">-0.214</td>
+<td align="right">0.831</td>
 </tr>
 </tbody>
 </table>
@@ -1274,9 +1309,9 @@ fit_phy |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">5.200</td>
-<td align="right">0.015</td>
-<td align="right">342.514</td>
+<td align="right">5.212</td>
+<td align="right">0.016</td>
+<td align="right">323.926</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
@@ -1379,19 +1414,19 @@ equivalent</td>
 <td align="right">0.332</td>
 </tr>
 <tr class="even">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.012</td>
+<td align="left">poverty_levelBelow 130% of Poverty Guidelines</td>
+<td align="right">-0.012</td>
 <td align="right">0.007</td>
-<td align="right">1.731</td>
+<td align="right">-1.731</td>
 <td align="right">0.083</td>
 </tr>
 <tr class="odd">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">0.011</td>
-<td align="right">0.009</td>
-<td align="right">1.235</td>
-<td align="right">0.217</td>
+<td align="right">-0.001</td>
+<td align="right">0.008</td>
+<td align="right">-0.150</td>
+<td align="right">0.881</td>
 </tr>
 </tbody>
 </table>
@@ -1494,9 +1529,9 @@ fit_alc |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">5.267</td>
-<td align="right">0.017</td>
-<td align="right">307.884</td>
+<td align="right">5.281</td>
+<td align="right">0.018</td>
+<td align="right">296.615</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
@@ -1599,19 +1634,19 @@ equivalent</td>
 <td align="right">0.465</td>
 </tr>
 <tr class="even">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.014</td>
+<td align="left">poverty_levelBelow 130% of Poverty Guidelines</td>
+<td align="right">-0.014</td>
 <td align="right">0.008</td>
-<td align="right">1.881</td>
+<td align="right">-1.881</td>
 <td align="right">0.060</td>
 </tr>
 <tr class="odd">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">0.017</td>
+<td align="right">0.002</td>
 <td align="right">0.009</td>
-<td align="right">1.760</td>
-<td align="right">0.078</td>
+<td align="right">0.277</td>
+<td align="right">0.782</td>
 </tr>
 </tbody>
 </table>
@@ -1650,9 +1685,9 @@ fit_full |&gt;
 <tbody>
 <tr class="odd">
 <td align="left">(Intercept)</td>
-<td align="right">5.263</td>
+<td align="right">5.277</td>
 <td align="right">0.019</td>
-<td align="right">281.592</td>
+<td align="right">272.405</td>
 <td align="right">0.000</td>
 </tr>
 <tr class="even">
@@ -1776,19 +1811,19 @@ equivalent</td>
 <td align="right">0.508</td>
 </tr>
 <tr class="odd">
-<td align="left">poverty_levelBelow 185% of Poverty Guidelines</td>
-<td align="right">0.013</td>
+<td align="left">poverty_levelBelow 130% of Poverty Guidelines</td>
+<td align="right">-0.013</td>
 <td align="right">0.008</td>
-<td align="right">1.778</td>
+<td align="right">-1.778</td>
 <td align="right">0.075</td>
 </tr>
 <tr class="even">
 <td align="left">poverty_levelBetween 130% and 185% of Poverty
 Guidelines</td>
-<td align="right">0.017</td>
+<td align="right">0.003</td>
 <td align="right">0.009</td>
-<td align="right">1.752</td>
-<td align="right">0.080</td>
+<td align="right">0.338</td>
+<td align="right">0.735</td>
 </tr>
 </tbody>
 </table>
@@ -1812,7 +1847,7 @@ summary(test_aic)</code></pre>
 ## 
 ## Coefficients:
 ##                                                           Estimate Std. Error
-## (Intercept)                                               5.276616   0.014518
+## (Intercept)                                               5.291661   0.014773
 ## alcohol_use_catLight Drinker                             -0.066035   0.009119
 ## alcohol_use_catModerate Drinker                          -0.046470   0.009319
 ## genderMale                                               -0.055600   0.006121
@@ -1826,10 +1861,10 @@ summary(test_aic)</code></pre>
 ## education_level_20High school graduate/GED or equivalent -0.009487   0.011201
 ## education_level_20Less than 9th grade                     0.031655   0.016478
 ## education_level_20Some college or AA degree               0.007220   0.010858
-## poverty_levelBelow 185% of Poverty Guidelines             0.015045   0.007450
-## poverty_levelBetween 130% and 185% of Poverty Guidelines  0.017362   0.009389
+## poverty_levelBelow 130% of Poverty Guidelines            -0.015045   0.007450
+## poverty_levelBetween 130% and 185% of Poverty Guidelines  0.002317   0.008895
 ##                                                          t value Pr(&gt;|t|)    
-## (Intercept)                                              363.457  &lt; 2e-16 ***
+## (Intercept)                                              358.207  &lt; 2e-16 ***
 ## alcohol_use_catLight Drinker                              -7.242 5.06e-13 ***
 ## alcohol_use_catModerate Drinker                           -4.987 6.33e-07 ***
 ## genderMale                                                -9.084  &lt; 2e-16 ***
@@ -1843,8 +1878,8 @@ summary(test_aic)</code></pre>
 ## education_level_20High school graduate/GED or equivalent  -0.847   0.3971    
 ## education_level_20Less than 9th grade                      1.921   0.0548 .  
 ## education_level_20Some college or AA degree                0.665   0.5061    
-## poverty_levelBelow 185% of Poverty Guidelines              2.019   0.0435 *  
-## poverty_levelBetween 130% and 185% of Poverty Guidelines   1.849   0.0645 .  
+## poverty_levelBelow 130% of Poverty Guidelines             -2.019   0.0435 *  
+## poverty_levelBetween 130% and 185% of Poverty Guidelines   0.260   0.7945    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
