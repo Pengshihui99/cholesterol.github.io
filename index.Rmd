@@ -17,4 +17,7 @@ output:
 
 
 * [Prevalence EDA](eda.html)
+* [Clean Data](clean.html)
 * [Exploratory Analysis](Exploratory-Analysis.html)
+* [Build Model](model.html)
+* [Report](report.html)

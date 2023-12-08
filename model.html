@@ -365,6 +365,9 @@ div.tocify {
     <li>
       <a href="mailto:rx2236@columbia.edu">Ruiqi Xue</a>
     </li>
+    <li>
+      <a href="mailto:sp4170@columbia.edu">Shihui Peng</a>
+    </li>
   </ul>
 </li>
 <li class="dropdown">
@@ -377,6 +380,9 @@ div.tocify {
   <ul class="dropdown-menu" role="menu">
     <li>
       <a href="http://github.com/RuiqiXue126/">Ruiqi Xue</a>
+    </li>
+    <li>
+      <a href="http://github.com/Pengshihui99/">Shihui Peng</a>
     </li>
   </ul>
 </li>
@@ -984,8 +990,11 @@ cat_des_df</code></pre>
 (<code>total_cholesterol</code>), and our explanatory variables are (1)
 cotinine (<code>cotinine</code>), (2) physical activity
 (<code>physical_activity</code>), and (3) alcohol use
-(<code>alcohol_use_cat</code>). We decide to analyze the association
-step by step. (significance level = 0.05)</p>
+(<code>alcohol_use_cat</code>). Sleep_hour is not significantly
+different between total cholesterol of desirable level and of above
+desirable level, so we remove this variable for the next model building
+steps. We decide to analyze the association step by step. (significance
+level = 0.05)</p>
 <div id="check-the-dataset" class="section level2">
 <h2><em>Check the dataset</em></h2>
 <pre class="r"><code>model_df |&gt; 

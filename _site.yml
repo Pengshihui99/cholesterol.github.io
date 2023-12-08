@@ -21,10 +21,14 @@ navbar:
       menu:
         - text: "Ruiqi Xue"
           href: mailto:rx2236@columbia.edu
+        - text: "Shihui Peng"
+          href: mailto:sp4170@columbia.edu
     - icon: fa-github fa-lg
       menu: 
         - text: "Ruiqi Xue"
           href: http://github.com/RuiqiXue126/
+        - text: "Shihui Peng"
+          href: http://github.com/Pengshihui99/
       
 output:
   html_document:

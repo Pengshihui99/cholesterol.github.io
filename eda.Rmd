@@ -1,7 +1,5 @@
 ---
 title: "EDA"
-author: "Ruiqi Xue"
-date: "2023-11-27"
 output: 
   html_document:
     toc: true
@@ -187,6 +185,8 @@ state_map
 
 ```
 
+* Based on the map, we can find that the prevalences of high cholesterol varied among the nation, but were generally higher in the south than in the north of the USA.
+
 ### Health Behaviors Prevalence Boxplot
 Draw a boxplot to visualize the prevalence of each health behavior that is related to and has potential association with high cholesterol.
 ```{r, message=FALSE, warning=FALSE}
@@ -238,6 +238,7 @@ box_plot = subplot(plot1, plot2)
 box_plot
 ```
 
+* Based on the boxplot, we can find that prevalence of high cholesterol was similar between 2020 and 2021. Lacking sleep was the most appreciable health-adverse behavior, followed by lacking physical activities. Binge drinking and smoking problem also existed, while they were not significant compared to other health-adverse behavior. The prevalence of cholesterol screening is high, while the prevalence of lacking health insurance is low. These indicate health-promote behavior.
 
 ### Association Trend Plot 
 This is to observe trendings of associations between prevalence of high cholesterol and prevalence of related health-affecting behaviors.
@@ -266,6 +267,8 @@ merged_total |>
 prevalence_plot
 
 ```
+
+* Based on the trend, when the prevalence of high cholesterol increased, we can find the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening also increased. The trend of the prevalence of binge drinking is not obvious. Therefore, we move to check sub-association trending plot.
 
 ### Sub-Association Trending Plot
 To have a clearer view of each behavior, let's "zoom in" and observe the trending in more detail.
@@ -303,6 +306,8 @@ pre_sub_figs = subplot(fig1, fig2, fig3, fig4, fig5, fig6, nrows = 2) |>
 pre_sub_figs
   
 ```
+
+* Based on these trending plots, we can find the prevalence of high cholesterol was (1) positively associated with the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening; and (2) negatively associated with the prevalence of binge drinking.
 
 ## Top behaviors affecting high cholesterol in terms of correlation
 
@@ -356,4 +361,6 @@ cor_bar = plot_ly(cor_table, x = ~Behavior, y = ~Correlation, type = 'bar', text
 cor_bar
 ```
 
+* Based on the table results and bar chart, we can find that the health-adverse behavior lacking physical activities, lacking sleep, binge drinking, and smoking had top four high correlations with high cholesterol. Binge drinking had a negative correlation with high cholesterol, which is against the common sense. 
 
+* Therefore, we decide to examine the associations between these four health-adverse behaviors and total cholesterol, and then to provide a statistical model to predict high total cholesterol risk for users.

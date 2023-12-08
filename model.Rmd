@@ -153,6 +153,7 @@ conti_des_df
 ### Methods
 
 For binary and categorical variables, we use **count** (n) and **percentage** (pct) to describe the distribution in overall samples, samples of desirable cholesterol level (defined as "control"), and samples of above-desirable cholesterol level (defined as "case"). Then, we use **chi-sq test** to examine whether the distribution of these variables are significantly different between case group and control group (significance level = 0.05).
+
 ```{r}
 # n and pct for categorical variables, chi-sq test, overall
 list_cat_all = list (
@@ -280,7 +281,7 @@ cat_des_df
 
 # **Building model**
 
-In this study, out response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1) cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`).  We decide to analyze the association step by step. (significance level = 0.05)
+In this study, out response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1) cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`). Sleep_hour is not significantly different between total cholesterol of desirable level and of above desirable level, so we remove this variable for the next model building steps. We decide to analyze the association step by step. (significance level = 0.05)
 
 ## *Check the dataset*
 
