@@ -20,16 +20,18 @@ navbar:
     - icon: fa-envelope fa-lg
       menu:
         - text: "Ruiqi Xue"
-          href: mailto:rx2236@columbia.edu
+          href: mailto:rx2236@cumc.columbia.edu
         - text: "Shihui Peng"
-          href: mailto:sp4170@columbia.edu
+          href: mailto:sp4170@cumc.columbia.edu
         - text: "Yuxuan Wang"
-          href: mailto:yw3995@columbia.edu
+          href: mailto:yw3995@cumc.columbia.edu
         - text: "Jingyu Wang"
-          href: mailto:jw4348@columbia.edu
+          href: mailto:jw4348@cumc.columbia.edu
         - text: "Jiangyuan Zhu"
-          href: mailto:jz3573@columbia.edu
-    - text: "Our Github"
+          href: mailto:jz3573@cumc.columbia.edu
+    - text: "About Us"
+      href: About-Us.html
+    - text: "Our Github Repository"
       href: https://github.com/Pengshihui99/cholesterol.github.io
 
       
