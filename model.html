@@ -2172,23 +2172,20 @@ values.</li>
 </ul>
 </div>
 </div>
-<div id="conclusion" class="section level2">
-<h2><em>Conclusion</em></h2>
+</div>
+<div id="conclusion" class="section level1">
+<h1><strong>Conclusion</strong></h1>
 <p>We decide to use model
 <code>fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>
 as our final model. With similar rmse distribution and r square, model
 <code>fit_alc</code> is less complex than model
 <code>fit_full</code>.</p>
-</div>
-<div id="next" class="section level2">
-<h2><em>Next</em></h2>
-<p>We save this model as a RDS file for the next R shiny part:
+<p>Then, We save this model as a RDS file for the next R shiny part:
 <strong>Predict your risk</strong>.</p>
 <pre class="r"><code>save_path = &quot;fit_alc.rds&quot;
 saveRDS(fit_alc, save_path)
 cat(&quot;Model saved as an RDS file:&quot;, save_path, &quot;\n&quot;)</code></pre>
 <pre><code>## Model saved as an RDS file: fit_alc.rds</code></pre>
-</div>
 </div>
 
 

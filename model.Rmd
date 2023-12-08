@@ -555,13 +555,11 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |>
 * Based on the violin plot, these four models have similar r square values.
 
 
-## *Conclusion*
+# **Conclusion**
 
 We decide to use model `fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level` as our final model. With similar rmse distribution and r square, model `fit_alc` is less complex than model `fit_full`.
 
-## *Next*
-
-We save this model as a RDS file for the next R shiny part: **Predict your risk**.
+Then, We save this model as a RDS file for the next R shiny part: **Predict your risk**.
 
 ```{r}
 save_path = "fit_alc.rds"
