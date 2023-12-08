@@ -6,3 +6,35 @@ output:
     toc_float: true
     code_folding: hide
 ---
+
+## **Motivation**
+Our project aims to explore the intricate relationship between substance use, other risk factors, and health outcomes, particularly focusing on cholesterol levels. With the growing concern about cardiovascular diseases and their association with lifestyle choices, understanding these relationships is crucial. We intend to use comprehensive datasets to analyze and model these associations, providing insights that could lead to better health outcomes.
+
+## **Initial questions**
+The purposes of this project is to answer the following questions:
+
+- What kind and extent of the correlations between substance use, other risk factors, and our targeted health outcome - cholesterol levels at national level?
+- What patterns do their correlation exhibit in the graphs?
+- By using the individual dataset, which models are effective in capturing the association between high cholesterol and a set of health-related behaviors identified in national dataset that exhibit a strong correlation?
+- How can we create a user-friendly tool enabling individuals to evaluate their personal risk of high cholesterol using demographic features and lifestyle choices?
+
+## **Data Sources and Cleaning**
+### Part 1
+### Part 2: [NHANCES](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020)
+In order to get individual data measurements to analyze the association of risk factors and `high Cholesterol`, we use the several sub-datasets from `NHANCES` to gather all the variables we are interested from the result of part 1. This resource conducted by the CDC for the time period of 2017 to March 2020 Pre-pandemic. It combines interviews and physical examinations to collect a wide range of health-related information. Initially, all the variables were non-descriptive, we assigned descriptive names for them. While importing the data measurements, the types of all the variables were numberical. Except continuous variables, we categorizd variables `gender`, `race`, `marital_status`, `education_level`, `poverty_level`, and `alcohol_use_cat`. The numbers from drinking habit dataset are not order in a logic way, therefore we reordered variables as `alcohol_use_order`. The dataset with information of physical activity used the skip methods 
+The comprehensive dataset employed for our analysis includes detail information for each participant, including key variables such as:
+
+  - `id`: Participants' unique identification numbers
+  - `total_cholesterol`: Serum total cholesterol level, in mg/dL
+  - `age`: participants' Age at screening , in year
+  - `gender`: 2 types: Male or Female
+  - `race`: 5 types: Hispanic, Non-Hispanic White, Non-Hispanic Black, Non-Hispanic Asian, Other Race
+  - `marital_status`: For the adults 20+ years old, 3 typess: Married/Living with Partner, Widowed/Divorced/Separated, Never married
+  - `education_level`: For the adults 20+ years old, 4 levels: Less than 9th grade, 9-11th grade, High school graduate/GED or equivalent, Some college or AA degree, College graduate or above
+  - `bmi`: Body Mass Index, in kg/m**2
+  - `poverty_level`: Family monthly poverty level category, 3 levels: Below 130% of Poverty Guidelines, Between 130% and 185% of Poverty Guidelines, Above 185% of Poverty Guidelines
+  - `physical_activity`: Types of weekly physical activity, 3 levels: Vigorous activity, Moderate activity, Light/Unknown activity
+  - `sleep_hour`: The sleeping habits in Weekdays or workdays, in hour
+  - `alcohol_use_order`: Ordinal variables, scale from 1 - 11 meaning from never to everyday consuming the alcohol in the past twelve months
+  - `alcohol_use_cat`: Category of drinking patterns, 3 levels: Light Drinker, Moderate Drinker, Heavy Drinker
+  - `cotinine`: Serum Cotinine concentration, in ng/mL

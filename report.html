@@ -363,28 +363,27 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="mailto:rx2236@columbia.edu">Ruiqi Xue</a>
+      <a href="mailto:rx2236@cumc.columbia.edu">Ruiqi Xue</a>
     </li>
     <li>
-      <a href="mailto:sp4170@columbia.edu">Shihui Peng</a>
+      <a href="mailto:sp4170@cumc.columbia.edu">Shihui Peng</a>
+    </li>
+    <li>
+      <a href="mailto:yw3995@cumc.columbia.edu">Yuxuan Wang</a>
+    </li>
+    <li>
+      <a href="mailto:jw4348@cumc.columbia.edu">Jingyu Wang</a>
+    </li>
+    <li>
+      <a href="mailto:jz3573@cumc.columbia.edu">Jiangyuan Zhu</a>
     </li>
   </ul>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <span class="fa fa-github fa-lg"></span>
-     
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="http://github.com/RuiqiXue126/">Ruiqi Xue</a>
-    </li>
-    <li>
-      <a href="http://github.com/Pengshihui99/">Shihui Peng</a>
-    </li>
-  </ul>
+<li>
+  <a href="About-Us.html">About Us</a>
+</li>
+<li>
+  <a href="https://github.com/Pengshihui99/cholesterol.github.io">Our Github Repository</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -408,7 +407,92 @@ div.tocify {
 </div>
 
 
-
+<div id="motivation" class="section level2">
+<h2><strong>Motivation</strong></h2>
+<p>Our project aims to explore the intricate relationship between
+substance use, other risk factors, and health outcomes, particularly
+focusing on cholesterol levels. With the growing concern about
+cardiovascular diseases and their association with lifestyle choices,
+understanding these relationships is crucial. We intend to use
+comprehensive datasets to analyze and model these associations,
+providing insights that could lead to better health outcomes.</p>
+</div>
+<div id="initial-questions" class="section level2">
+<h2><strong>Initial questions</strong></h2>
+<p>The purposes of this project is to answer the following
+questions:</p>
+<ul>
+<li>What kind and extent of the correlations between substance use,
+other risk factors, and our targeted health outcome - cholesterol levels
+at national level?</li>
+<li>What patterns do their correlation exhibit in the graphs?</li>
+<li>By using the individual dataset, which models are effective in
+capturing the association between high cholesterol and a set of
+health-related behaviors identified in national dataset that exhibit a
+strong correlation?</li>
+<li>How can we create a user-friendly tool enabling individuals to
+evaluate their personal risk of high cholesterol using demographic
+features and lifestyle choices?</li>
+</ul>
+</div>
+<div id="data-sources-and-cleaning" class="section level2">
+<h2><strong>Data Sources and Cleaning</strong></h2>
+<div id="part-1" class="section level3">
+<h3>Part 1</h3>
+</div>
+<div id="part-2-nhances" class="section level3">
+<h3>Part 2: <a
+href="https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020">NHANCES</a></h3>
+<p>In order to get individual data measurements to analyze the
+association of risk factors and <code>high Cholesterol</code>, we use
+the several sub-datasets from <code>NHANCES</code> to gather all the
+variables we are interested from the result of part 1. This resource
+conducted by the CDC for the time period of 2017 to March 2020
+Pre-pandemic. It combines interviews and physical examinations to
+collect a wide range of health-related information. Initially, all the
+variables were non-descriptive, we assigned descriptive names for them.
+While importing the data measurements, the types of all the variables
+were numberical. Except continuous variables, we categorizd variables
+<code>gender</code>, <code>race</code>, <code>marital_status</code>,
+<code>education_level</code>, <code>poverty_level</code>, and
+<code>alcohol_use_cat</code>. The numbers from drinking habit dataset
+are not order in a logic way, therefore we reordered variables as
+<code>alcohol_use_order</code>. The dataset with information of physical
+activity used the skip methods The comprehensive dataset employed for
+our analysis includes detail information for each participant, including
+key variables such as:</p>
+<ul>
+<li><code>id</code>: Participants’ unique identification numbers</li>
+<li><code>total_cholesterol</code>: Serum total cholesterol level, in
+mg/dL</li>
+<li><code>age</code>: participants’ Age at screening , in year</li>
+<li><code>gender</code>: 2 types: Male or Female</li>
+<li><code>race</code>: 5 types: Hispanic, Non-Hispanic White,
+Non-Hispanic Black, Non-Hispanic Asian, Other Race</li>
+<li><code>marital_status</code>: For the adults 20+ years old, 3 typess:
+Married/Living with Partner, Widowed/Divorced/Separated, Never
+married</li>
+<li><code>education_level</code>: For the adults 20+ years old, 4
+levels: Less than 9th grade, 9-11th grade, High school graduate/GED or
+equivalent, Some college or AA degree, College graduate or above</li>
+<li><code>bmi</code>: Body Mass Index, in kg/m**2</li>
+<li><code>poverty_level</code>: Family monthly poverty level category, 3
+levels: Below 130% of Poverty Guidelines, Between 130% and 185% of
+Poverty Guidelines, Above 185% of Poverty Guidelines</li>
+<li><code>physical_activity</code>: Types of weekly physical activity, 3
+levels: Vigorous activity, Moderate activity, Light/Unknown
+activity</li>
+<li><code>sleep_hour</code>: The sleeping habits in Weekdays or
+workdays, in hour</li>
+<li><code>alcohol_use_order</code>: Ordinal variables, scale from 1 - 11
+meaning from never to everyday consuming the alcohol in the past twelve
+months</li>
+<li><code>alcohol_use_cat</code>: Category of drinking patterns, 3
+levels: Light Drinker, Moderate Drinker, Heavy Drinker</li>
+<li><code>cotinine</code>: Serum Cotinine concentration, in ng/mL</li>
+</ul>
+</div>
+</div>
 
 
 
