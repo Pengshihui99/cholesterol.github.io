@@ -6,3 +6,39 @@ output:
     toc_float: true
     code_folding: hide
 ---
+
+(Names ranked by surname)
+
+## **Shihui Peng** 
+
+MPH-Epidemiology-Biostatistics
+
+[Learn more about Shihui]()
+ 
+
+## **Jingyu Wang** 
+
+MPH-Epidemiology-Biostatistics
+
+[Learn more about Jingyu]()
+
+
+## **Yuxuan Wang** 
+
+MPH-Epidemiology-Chronic Disease
+
+[Learn more about Yuxuan]()
+
+
+## **Ruiqi Xue** 
+
+MS-Biostatistics
+
+[Learn more about Ruiqi]() 
+ 
+
+## **Jiangyuan Zhu** 
+
+MPH-Epidemiology-Mental Health
+
+[Learn more about Jiangyuan]()
