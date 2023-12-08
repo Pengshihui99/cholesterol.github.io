@@ -1072,7 +1072,8 @@ fit_1 |&gt;
   modelr::add_residuals(fit_1) |&gt; 
   ggplot(aes(sample = resid)) +
   stat_qq() +
-  stat_qq_line()</code></pre>
+  stat_qq_line() +
+  labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-7-1.png" width="90%" /></p>
 <ul>
 <li>We can see that cotinine is <strong>significantly
@@ -1290,7 +1291,8 @@ fit_2 |&gt;
   modelr::add_residuals(fit_2) |&gt; 
   ggplot(aes(sample = resid)) +
   stat_qq() +
-  stat_qq_line()</code></pre>
+  stat_qq_line() +
+  labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-9-1.png" width="90%" /></p>
 <ul>
 <li>We can see that physical_activity is <strong>not significantly
@@ -1516,7 +1518,8 @@ fit_3 |&gt;
   modelr::add_residuals(fit_3) |&gt; 
   ggplot(aes(sample = resid)) +
   stat_qq() +
-  stat_qq_line()</code></pre>
+  stat_qq_line() +
+  labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-11-1.png" width="90%" /></p>
 <ul>
 <li>We can see that alcohol_use_cat is <strong>significantly

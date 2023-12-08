@@ -333,7 +333,8 @@ model_df |>
   modelr::add_residuals(fit_1) |> 
   ggplot(aes(sample = resid)) +
   stat_qq() +
-  stat_qq_line()
+  stat_qq_line() +
+  labs(title = "QQ plot", x = "Quantile", y = "Residual")
 ```
 
 * We can see that cotinine is **significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
@@ -374,7 +375,8 @@ model_df |>
   modelr::add_residuals(fit_2) |> 
   ggplot(aes(sample = resid)) +
   stat_qq() +
-  stat_qq_line()
+  stat_qq_line() +
+  labs(title = "QQ plot", x = "Quantile", y = "Residual")
 ```
 
 * We can see that physical_activity is **not significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
@@ -415,7 +417,8 @@ model_df |>
   modelr::add_residuals(fit_3) |> 
   ggplot(aes(sample = resid)) +
   stat_qq() +
-  stat_qq_line()
+  stat_qq_line() +
+  labs(title = "QQ plot", x = "Quantile", y = "Residual")
 ```
 
 * We can see that alcohol_use_cat is **significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
