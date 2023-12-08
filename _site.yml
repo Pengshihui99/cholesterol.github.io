@@ -14,7 +14,7 @@ navbar:
         - text: "Build Model"
           href: model.html
     - text: "Predict Your Risk"
-      href: https://ruiqixue.shinyapps.io/cholesterol_github/
+      href: https://ruiqixue.shinyapps.io/shiny/
     - text: "Project Report"
       href: Exploratory-Analysis.html
     - icon: fa-envelope fa-lg
