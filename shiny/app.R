@@ -99,7 +99,7 @@ shinyApp(
       
       output$prediction_output2 = renderText({
         # Your prediction result text
-        paste("Considering only these variables, you tend to have a cholesterol level approximately at: ", exp(prediction_result), "mg/dL.")
+        paste("Considering only these factors, you tend to have a total cholesterol level approximately at: ", exp(prediction_result), "mg/dL.")
       })
       
       output$prediction_output = renderText({
