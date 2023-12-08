@@ -11,34 +11,44 @@ output:
 
 ## **Shihui Peng** 
 
-MPH-Epidemiology-Biostatistics
+MPH-Epidemiology-Biostatistics Track
 
-[Learn more about Shihui]()
+Columbia University Mailman School of Public Health
+
+[Learn more about Shihui](https://pengshihui99.github.io/)
  
 
 ## **Jingyu Wang** 
 
-MPH-Epidemiology-Biostatistics
+MPH-Epidemiology-Biostatistics Track
 
-[Learn more about Jingyu]()
+Columbia University Mailman School of Public Health
+
+[Learn more about Jingyu](https://cuwings.github.io/jingyu-wang.github.io/)
 
 
 ## **Yuxuan Wang** 
 
-MPH-Epidemiology-Chronic Disease
+MPH-Epidemiology-Chronic Disease Track
 
-[Learn more about Yuxuan]()
+Columbia University Mailman School of Public Health
+
+[Learn more about Yuxuan](https://rain9889.github.io/)
 
 
 ## **Ruiqi Xue** 
 
-MS-Biostatistics
+MS-Biostatistics-Theory & Methods Track
 
-[Learn more about Ruiqi]() 
+Columbia University Mailman School of Public Health
+
+[Learn more about Ruiqi](https://ruiqixue126.github.io/) 
  
 
 ## **Jiangyuan Zhu** 
 
-MPH-Epidemiology-Mental Health
+MPH-Epidemiology-Population Mental Health Track
 
-[Learn more about Jiangyuan]()
+Columbia University Mailman School of Public Health
+
+[Learn more about Jiangyuan](https://arceezhu.github.io)
