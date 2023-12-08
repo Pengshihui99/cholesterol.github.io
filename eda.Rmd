@@ -1,5 +1,5 @@
 ---
-title: "EDA"
+title: "High Cholesterol Prevalence Analysis"
 output: 
   html_document:
     toc: true
@@ -171,7 +171,7 @@ geo_df = left_join(states, chol_small_df) |>
   filter(! STUSPS %in% state_to_remove) 
 
 map_plot = ggplot(geo_df) +
-  geom_sf(aes(fill = chol_pre_2021, text = paste("State: ", NAME, "<br>Prevalence: ", chol_pre_2021)))+
+  geom_sf(aes(fill = chol_pre_2021, text = paste("State: ", NAME, "<br>Prevalence: ", percent(round(chol_pre_2021, digits = 3))))) +
   scale_fill_distiller("prevalence", palette="YlOrRd") +
   theme_minimal() +
   theme(axis.ticks = element_blank(), axis.text = element_blank()) +
