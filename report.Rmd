@@ -19,7 +19,7 @@ The purposes of this project is to answer the following questions:
 - How can we create a user-friendly tool enabling individuals to evaluate their personal risk of high cholesterol using demographic features and lifestyle choices?
 
 ## **Data Sources and Cleaning**
-### Part 1
+### Part 1: 
 ### Part 2: [NHANCES](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020)
 In order to get individual data measurements to analyze the association of risk factors and `high Cholesterol`, we use the several sub-datasets from `NHANCES` to gather all the variables we are interested from the result of part 1. This resource conducted by the CDC for the time period of 2017 to March 2020 Pre-pandemic. It combines interviews and physical examinations to collect a wide range of health-related information. Initially, all the variables were non-descriptive, we assigned descriptive names for them. While importing the data measurements, the types of all the variables were numberical. Except continuous variables, we categorizd variables `gender`, `race`, `marital_status`, `education_level`, `poverty_level`, and `alcohol_use_cat`. The numbers from drinking habit dataset are not order in a logic way, therefore we reordered variables as `alcohol_use_order`. The dataset with information of physical activity used the skip methods 
 The comprehensive dataset employed for our analysis includes detail information for each participant, including key variables such as:
