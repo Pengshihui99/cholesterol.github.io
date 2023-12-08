@@ -332,7 +332,7 @@ div.tocify {
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Modeling
+    Analysis
      
     <span class="caret"></span>
   </a>
@@ -353,6 +353,15 @@ div.tocify {
 </li>
 <li>
   <a href="report.html">Project Report</a>
+</li>
+<li>
+  <a href="About-Us.html">About Us</a>
+</li>
+<li>
+  <a href="https://github.com/Pengshihui99/cholesterol.github.io">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -378,12 +387,6 @@ div.tocify {
       <a href="mailto:jz3573@cumc.columbia.edu">Jiangyuan Zhu</a>
     </li>
   </ul>
-</li>
-<li>
-  <a href="About-Us.html">About Us</a>
-</li>
-<li>
-  <a href="https://github.com/Pengshihui99/cholesterol.github.io">Our Github Repository</a>
 </li>
       </ul>
     </div><!--/.nav-collapse -->
@@ -611,6 +614,10 @@ conti_des_df</code></pre>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>Based on the result, we can find that the age and cotinine is
+significantly different between case and control.</li>
+</ul>
 </div>
 </div>
 <div id="binary-and-categorical-variables" class="section level2">
@@ -621,9 +628,10 @@ conti_des_df</code></pre>
 (n) and <strong>percentage</strong> (pct) to describe the distribution
 in overall samples, samples of desirable cholesterol level (defined as
 “control”), and samples of above-desirable cholesterol level (defined as
-“case”). Then, we use <strong>chi-sq test</strong> to examine whether
-the distribution of these variables are significantly different between
-case group and control group (significance level = 0.05).</p>
+“case”). Then, as the data meet the assumption, we use <strong>chi-sq
+test</strong> to examine whether the distribution of these variables are
+significantly different between case group and control group
+(significance level = 0.05).</p>
 <pre class="r"><code># n and pct for categorical variables, chi-sq test, overall
 list_cat_all = list (
   gender = model_df$gender,
@@ -980,57 +988,61 @@ cat_des_df</code></pre>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>Based on the result, we can find that all the binary and categorical
+variables are significantly different between case and control.</li>
+</ul>
 </div>
 </div>
 </div>
 <div id="building-model" class="section level1">
 <h1><strong>Building model</strong></h1>
-<p>In this study, out response variable is total cholesterol level
+<p>In this study, our response variable is total cholesterol level
 (<code>total_cholesterol</code>), and our explanatory variables are (1)
 cotinine (<code>cotinine</code>), (2) physical activity
 (<code>physical_activity</code>), and (3) alcohol use
 (<code>alcohol_use_cat</code>). Sleep_hour is not significantly
 different between total cholesterol of desirable level and of above
 desirable level, so we remove this variable for the next model building
-steps. We decide to analyze the association step by step. (significance
-level = 0.05)</p>
+steps. We decide to analyze the association step by step (significance
+level = 0.05).</p>
 <div id="check-the-dataset" class="section level2">
 <h2><em>Check the dataset</em></h2>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point() +
-  labs(title = &quot;Total_cholesterol against serum cotinine&quot;, x = &quot;Serum cotinine (ng/ml)&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Total_cholesterol against Serum Cotinine&quot;, x = &quot;Serum cotinine (ng/ml)&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-1.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = alcohol_use_cat, y = total_cholesterol)) + geom_point() +
-  labs(title = &quot;Total_cholesterol against alcohol use&quot;, x = &quot;Alcohol use&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Total_cholesterol against Alcohol Use&quot;, x = &quot;Alcohol use&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-2.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = physical_activity, y = total_cholesterol)) + geom_point() +
-  labs(title = &quot;Total_cholesterol against physical_activity&quot;, x = &quot;Physical activity&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Total_cholesterol against Physical_activity&quot;, x = &quot;Physical activity&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-3.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = total_cholesterol)) + geom_density() +
-  labs(title = &quot;Destribution of total_cholesterol&quot;, x = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Destribution of Total_cholesterol&quot;, x = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-4.png" width="90%" /></p>
 <ul>
 <li>Based on the scatterplot, we can find slightly negative linear
 trends, but there is heteroscedasticity problem. Also, based on the
-density plot, we can find that the distribution of y is asymmetry.
-Therefore, we decide to use linear regression model with
-log-transformation on response variable (y)
-<code>total_cholesterol</code> for the following models.</li>
+density plot, we can find that the distribution of response variable (y)
+<code>total_cholesterol</code> is asymmetry. Therefore, we decide to use
+linear regression model with log-transformation on y for the following
+models.</li>
 </ul>
 </div>
 <div id="model-selection" class="section level2">
 <h2><em>Model selection</em></h2>
 <p>Here, we use seven ways to build up different models. For the first
 four models, we build them based on epidemiological views. For the
-sixth, seventh, and eighth models, we build them based on biostatistics
+sixth, seventh, and eighth models, we build them based on biostatistical
 knowledge (AIC value, backward selection, and stepwise selection)
 combined with epidemiological views.</p>
 <div id="main-explanatory-variable-cotinine" class="section level3">
 <h3>1. main explanatory variable: cotinine</h3>
-<p>We hypothesis that cotinine, an indicator of exposure of smoking, is
+<p>We hypothesize that cotinine, an indicator of exposure of smoking, is
 positively associated with the log of total cholesterol.</p>
 <div id="univariable-linear-regression" class="section level4">
 <h4>1) Univariable linear regression</h4>
@@ -1227,7 +1239,7 @@ Guidelines</td>
 <ul>
 <li>Based on the estimates of alcohol_use_cat, we can see no association
 between cotinine and log total cholesterol. This is not consistent with
-our hypothesis, but the estimate is not significant at 0.05 level of
+our hypothesis, and the estimate is not significant at 0.05 level of
 significance.</li>
 </ul>
 </div>
@@ -1235,7 +1247,7 @@ significance.</li>
 <div id="main-explanatory-variable-physical_activity"
 class="section level3">
 <h3>2. main explanatory variable: physical_activity</h3>
-<p>We hypothesis that physical activity is negatively associated with
+<p>We hypothesize that physical activity is negatively associated with
 the log of total cholesterol.</p>
 <div id="univariable-linear-regression-1" class="section level4">
 <h4>1) Univariable linear regression</h4>
@@ -1298,7 +1310,9 @@ fit_2 |&gt;
 associated</strong> with total cholesterol level. We also check the
 qq-plot and find that the residuals followed a normal distribution,
 which indicates a suitability of using linear regression.</li>
-<li>Therefore, we move forward to build multivariable regression.</li>
+<li>Though no significant result found, we think maybe it is the
+confounders that conceal the association. Therefore, we move forward to
+build multivariable regression.</li>
 </ul>
 </div>
 <div id="multivariable-linear-regression-1" class="section level4">
@@ -1452,18 +1466,18 @@ Guidelines</td>
 </table>
 <ul>
 <li>Based on the estimates of alcohol_use_cat, we can see that compared
-to population with light activity, population with moderate activity and
-vigorous activity both have higher total cholesterol. This is not
-consistent with our hypothesis, but the association is not significant
-at 0.05 level of significance.</li>
+to population with light activity (reference group), population with
+moderate activity and vigorous activity both have higher total
+cholesterol. This is not consistent with our hypothesis, and the
+association is not significant at 0.05 level of significance.</li>
 </ul>
 </div>
 </div>
 <div id="main-explanatory-variable-alcohol_use_cat"
 class="section level3">
 <h3>3. main explanatory variable: alcohol_use_cat</h3>
-<p>We hypothesis that alcohol drinking is positively associated with the
-log of total cholesterol.</p>
+<p>We hypothesize that alcohol drinking is positively associated with
+the log of total cholesterol.</p>
 <div id="univariable-linear-regression-2" class="section level4">
 <h4>1) Univariable linear regression</h4>
 <p><code>fit_3: total_cholesterol = alcohol_use_cat</code></p>
@@ -1521,7 +1535,7 @@ fit_3 |&gt;
   labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-11-1.png" width="90%" /></p>
 <ul>
-<li>We can see that alcohol_use_cat is <strong>significantly
+<li>We can see that alcohol_use_cat is <strong>significantly positively
 associated</strong> with total cholesterol level. We also check the
 qq-plot and find that the residuals followed a normal distribution,
 which indicates a suitability of using linear regression.</li>
@@ -1679,9 +1693,10 @@ Guidelines</td>
 </table>
 <ul>
 <li>Based on the estimates of alcohol_use_cat, we can see that compared
-to heavy drinkers, light drinkers and moderate drinkers both have
-significant lower total cholesterol. Light drinkers have lower risk than
-moderate drinkers. This is consistent with our hypothesis</li>
+to heavy drinkers (reference group), light drinkers and moderate
+drinkers both have significant lower total cholesterol. Light drinkers
+have lower risk than moderate drinkers. This is consistent with our
+hypothesis</li>
 </ul>
 </div>
 </div>
@@ -1692,8 +1707,8 @@ class="section level3">
 alcohol_use_cat</h3>
 <p>We assume that smoking (implied by cotinine), alcohol drinking, and
 physical activity could be potentially related to each other.
-Therefrore, a full model including these three variables makes
-sense.</p>
+Therefrore, a full model including these three variables to adjust their
+influence to each other makes sense.</p>
 <p><code>fit_full: log(total_cholesterol) = cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code></p>
 <pre class="r"><code>fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
@@ -1929,8 +1944,8 @@ comparing AIC value is
 <code>log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code>.
 However, we think variable age is an essential variable when studying
 health outcome, such as total cholesterol in this study. Therefore, we
-decide to add variable age into this model, and summary the final model
-for comparing is
+decide to add variable <strong>age</strong> into this model, and summary
+the final model for comparing is
 <code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
@@ -2004,8 +2019,8 @@ is
 <code>log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code>.
 However, we think variable age is an essential variable when studying
 health outcome, such as total cholesterol in this study. Therefore, we
-decide to add variable age into this model, and summary the final model
-for comparing is
+decide to add variable <strong>age</strong> into this model, and summary
+the final model for comparing is
 <code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
@@ -2079,8 +2094,8 @@ is
 <code>log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code>.
 However, we think variable age is an essential variable when studying
 health outcome, such as total cholesterol in this study. Therefore, we
-decide to add variable age into this model, and summary the final model
-for comparing is
+decide to add variable <strong>age</strong> into this model, and summary
+the final model for comparing is
 <code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
@@ -2131,11 +2146,12 @@ cv_results |&gt;
     values_to = &quot;rmse&quot;,
     names_prefix = &quot;rmse_&quot;
   ) |&gt; 
-  ggplot(aes(x = model_type, y = rmse)) + geom_violin()</code></pre>
+  ggplot(aes(x = model_type, y = rmse)) + geom_violin() +
+  labs(x = &quot;Model Type&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-17-1.png" width="90%" /></p>
 <ul>
 <li>Based on the violin plot, these four models have similar spread of
-rmses.</li>
+root mean squared error.</li>
 </ul>
 </div>
 <div id="r-square" class="section level3">
@@ -2177,8 +2193,9 @@ values.</li>
 <p>We decide to use model
 <code>fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>
 as our final model. With similar rmse distribution and r square, model
-<code>fit_alc</code> is less complex than model
-<code>fit_full</code>.</p>
+<code>fit_alc</code> is less complex than model <code>fit_full</code>,
+and AIC value, backward selection, and stepwise selection all indicate
+this model is the best.</p>
 <p>Take a deeper look at the estiamtes of model
 <code>fit_alc</code>s:</p>
 <pre class="r"><code>fit_alc |&gt; 
@@ -2326,18 +2343,17 @@ Guidelines</td>
 </tbody>
 </table>
 <ul>
-<li>Compared to heavy drinkers, light drinkers would have 0.066mg/dL
-less log(total_cholesterol) and moderate drinkers would have 0.046mg/dL
-less log(total_cholesterol), adjusting for age, gender, race, marital
-status, education level, and poverty level, based on this sample. This
-association is significant at 0.05 level of significance.</li>
+<li>Compared to heavy drinkers (reference group), light drinkers would
+have 0.066mg/dL less log(total_cholesterol) and moderate drinkers would
+have 0.046mg/dL less log(total_cholesterol), adjusting for age, gender,
+race, marital status, education level, and poverty level, based on this
+sample. This association is significant at 0.05 level of
+significance.</li>
 </ul>
 <p>Then, We save this model as a RDS file for the next R shiny part:
 <strong>Predict your risk</strong>.</p>
 <pre class="r"><code>save_path = &quot;fit_alc.rds&quot;
-saveRDS(fit_alc, save_path)
-cat(&quot;Model saved as an RDS file:&quot;, save_path, &quot;\n&quot;)</code></pre>
-<pre><code>## Model saved as an RDS file: fit_alc.rds</code></pre>
+saveRDS(fit_alc, save_path)</code></pre>
 </div>
 
 
