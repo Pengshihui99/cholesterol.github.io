@@ -131,7 +131,7 @@ bmi_df =
   drop_na()
 
 income_df = 
-  data <- read_xpt("data/xpt/P_INQ.XPT") |> 
+  read_xpt("data/xpt/P_INQ.XPT") |> 
   janitor::clean_names() |>
   select(id = seqn, poverty_level = indfmmpi) |> 
   drop_na() |> 
