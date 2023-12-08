@@ -9,11 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Shihui Peng" />
 
-<meta name="date" content="2023-12-04" />
 
-<title>Model</title>
+<title>Model Building</title>
 
 <script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -399,9 +397,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Model</h1>
-<h4 class="author">Shihui Peng</h4>
-<h4 class="date">2023-12-04</h4>
+<h1 class="title toc-ignore">Model Building</h1>
 
 </div>
 
@@ -449,10 +445,10 @@ desire_df =
 ab_desire_df = 
   model_df |&gt; 
   filter(chol_cat == 1)</code></pre>
-<div id="description-of-variables-features" class="section level1">
-<h1>Description of variables features</h1>
+<div id="variables-features" class="section level1">
+<h1><strong>Variables features</strong></h1>
 <div id="continuous-variables" class="section level2">
-<h2>Continuous variables</h2>
+<h2><em>Continuous variables</em></h2>
 <div id="methods" class="section level3">
 <h3>Methods</h3>
 <p>For continuous variables, we use <strong>mean</strong> and
@@ -535,7 +531,7 @@ std_ab_desire = sapply(list_conti_ab_desire, sd) |&gt;
   rename(case_std = &quot;sapply(list_conti_ab_desire, sd)&quot;)</code></pre>
 </div>
 <div id="description-table" class="section level3">
-<h3>description table</h3>
+<h3>Description table</h3>
 <pre class="r"><code># combind - continuous
 conti_des_df =
   as.data.frame(cbind(mean_all, std_all, mean_desire, std_desire, mean_ab_desire, std_ab_desire, p_value))
@@ -613,7 +609,7 @@ conti_des_df</code></pre>
 </div>
 </div>
 <div id="binary-and-categorical-variables" class="section level2">
-<h2>Binary and categorical variables</h2>
+<h2><em>Binary and categorical variables</em></h2>
 <div id="methods-1" class="section level3">
 <h3>Methods</h3>
 <p>For binary and categorical variables, we use <strong>count</strong>
@@ -734,7 +730,7 @@ cat_count_case = lapply(cat_vars_case, count_case_function) |&gt;
   as.data.frame()</code></pre>
 </div>
 <div id="description-table-1" class="section level3">
-<h3>description table</h3>
+<h3>Description table</h3>
 <pre class="r"><code>cat_des_df =
   cbind.data.frame(cat_count_chisq, cat_count_ctrl, cat_count_case) |&gt; 
   drop_na()
@@ -983,15 +979,15 @@ cat_des_df</code></pre>
 </div>
 </div>
 <div id="building-model" class="section level1">
-<h1>Building model</h1>
+<h1><strong>Building model</strong></h1>
 <p>In this study, out response variable is total cholesterol level
-(<code>total_cholesterol</code>), and our explanatory variables are
-(1)cotinine (<code>cotinine</code>), (2) physical activity
+(<code>total_cholesterol</code>), and our explanatory variables are (1)
+cotinine (<code>cotinine</code>), (2) physical activity
 (<code>physical_activity</code>), and (3) alcohol use
 (<code>alcohol_use_cat</code>). We decide to analyze the association
 step by step. (significance level = 0.05)</p>
 <div id="check-the-dataset" class="section level2">
-<h2>Check the dataset</h2>
+<h2><em>Check the dataset</em></h2>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point() +
   labs(title = &quot;Total_cholesterol against serum cotinine&quot;, x = &quot;Serum cotinine (ng/ml)&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
@@ -1018,12 +1014,19 @@ log-transformation on response variable (y)
 </ul>
 </div>
 <div id="model-selection" class="section level2">
-<h2>Model selection</h2>
+<h2><em>Model selection</em></h2>
+<p>Here, we use seven ways to build up different models. For the first
+four models, we build them based on epidemiological views. For the
+sixth, seventh, and eighth models, we build them based on biostatistics
+knowledge (AIC value, backward selection, and stepwise selection)
+combined with epidemiological views.</p>
 <div id="main-explanatory-variable-cotinine" class="section level3">
 <h3>1. main explanatory variable: cotinine</h3>
-<div id="univariable-linear-regression-total_cholesterol-cotinine"
-class="section level4">
-<h4>Univariable linear regression: total_cholesterol = cotinine</h4>
+<p>We hypothesis that cotinine, an indicator of exposure of smoking, is
+positively associated with the log of total cholesterol.</p>
+<div id="univariable-linear-regression" class="section level4">
+<h4>1) Univariable linear regression</h4>
+<p><code>fit_1: log(total_cholesterol) = cotinine</code></p>
 <pre class="r"><code>fit_1 = lm(log(total_cholesterol) ~ cotinine, data = model_df)
 
 fit_1 |&gt; 
@@ -1063,17 +1066,16 @@ fit_1 |&gt;
   stat_qq_line()</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-7-1.png" width="90%" /></p>
 <ul>
-<li>We can see that cotinine is significantly associated with total
-cholesterol level. We also check the qq-plot and find that the residuals
-followed a normal distribution, which indicates a suitability of using
-linear regression.</li>
+<li>We can see that cotinine is <strong>significantly
+associated</strong> with total cholesterol level. We also check the
+qq-plot and find that the residuals followed a normal distribution,
+which indicates a suitability of using linear regression.</li>
 <li>Therefore, we move forward to build multivariable regression.</li>
 </ul>
 </div>
 <div id="multivariable-linear-regression" class="section level4">
-<h4>Multivariable linear regression</h4>
-<p>fit_cot: log(total_cholesterol) = cotinine + age + gender + race +
-marital_status + education_level_20 + poverty_level</p>
+<h4>2) Multivariable linear regression</h4>
+<p><code>fit_cot: log(total_cholesterol) = cotinine + age + gender + race + marital_status + education_level_20 + poverty_level</code></p>
 <pre class="r"><code>fit_cot = lm(log(total_cholesterol) ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_cot |&gt; 
@@ -1213,16 +1215,22 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>Based on the estimates of alcohol_use_cat, we can see no association
+between cotinine and log total cholesterol. This is not consistent with
+our hypothesis, but the estimate is not significant at 0.05 level of
+significance.</li>
+</ul>
 </div>
 </div>
 <div id="main-explanatory-variable-physical_activity"
 class="section level3">
 <h3>2. main explanatory variable: physical_activity</h3>
-<div
-id="univariable-linear-regression-total_cholesterol-physical_activity"
-class="section level4">
-<h4>Univariable linear regression: total_cholesterol =
-physical_activity</h4>
+<p>We hypothesis that physical activity is negatively associated with
+the log of total cholesterol.</p>
+<div id="univariable-linear-regression-1" class="section level4">
+<h4>1) Univariable linear regression</h4>
+<p><code>fit_2: total_cholesterol = physical_activity</code></p>
 <pre class="r"><code>fit_2 = lm(log(total_cholesterol) ~ physical_activity, data = model_df)
 
 fit_2 |&gt; 
@@ -1276,17 +1284,16 @@ fit_2 |&gt;
   stat_qq_line()</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-9-1.png" width="90%" /></p>
 <ul>
-<li>We can see that physical_activity is not significantly associated
-with total cholesterol level. We also check the qq-plot and find that
-the residuals followed a normal distribution, which indicates a
-suitability of using linear regression.</li>
+<li>We can see that physical_activity is <strong>not significantly
+associated</strong> with total cholesterol level. We also check the
+qq-plot and find that the residuals followed a normal distribution,
+which indicates a suitability of using linear regression.</li>
 <li>Therefore, we move forward to build multivariable regression.</li>
 </ul>
 </div>
 <div id="multivariable-linear-regression-1" class="section level4">
-<h4>Multivariable linear regression</h4>
-<p>fit_phy: log(total_cholesterol) = physical_activity + age + gender +
-race + marital_status + education_level_20 + poverty_level</p>
+<h4>2) Multivariable linear regression</h4>
+<p><code>fit_phy: log(total_cholesterol) = physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level</code></p>
 <pre class="r"><code>fit_phy = lm(log(total_cholesterol) ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_phy |&gt; 
@@ -1433,16 +1440,23 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>Based on the estimates of alcohol_use_cat, we can see that compared
+to population with light activity, population with moderate activity and
+vigorous activity both have higher total cholesterol. This is not
+consistent with our hypothesis, but the association is not significant
+at 0.05 level of significance.</li>
+</ul>
 </div>
 </div>
 <div id="main-explanatory-variable-alcohol_use_cat"
 class="section level3">
 <h3>3. main explanatory variable: alcohol_use_cat</h3>
-<div
-id="univariable-linear-regression-total_cholesterol-alcohol_use_cat"
-class="section level4">
-<h4>Univariable linear regression: total_cholesterol =
-alcohol_use_cat</h4>
+<p>We hypothesis that alcohol drinking is positively associated with the
+log of total cholesterol.</p>
+<div id="univariable-linear-regression-2" class="section level4">
+<h4>1) Univariable linear regression</h4>
+<p><code>fit_3: total_cholesterol = alcohol_use_cat</code></p>
 <pre class="r"><code>fit_3 = lm(log(total_cholesterol) ~ alcohol_use_cat, data = model_df)
 
 fit_3 |&gt; 
@@ -1496,17 +1510,16 @@ fit_3 |&gt;
   stat_qq_line()</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-11-1.png" width="90%" /></p>
 <ul>
-<li>We can see that alcohol_use_cat is significantly associated with
-total cholesterol level. We also check the qq-plot and find that the
-residuals followed a normal distribution, which indicates a suitability
-of using linear regression.</li>
+<li>We can see that alcohol_use_cat is <strong>significantly
+associated</strong> with total cholesterol level. We also check the
+qq-plot and find that the residuals followed a normal distribution,
+which indicates a suitability of using linear regression.</li>
 <li>Therefore, we move forward to build multivariable regression.</li>
 </ul>
 </div>
 <div id="multivariable-linear-regression-2" class="section level4">
-<h4>Multivariable linear regression</h4>
-<p>fit_alc: log(total_cholesterol) = alcohol_use_cat + age + gender +
-race + marital_status + education_level_20 + poverty_level</p>
+<h4>2) Multivariable linear regression</h4>
+<p><code>fit_alc: log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code></p>
 <pre class="r"><code>fit_alc = lm(log(total_cholesterol) ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_alc |&gt; 
@@ -1653,6 +1666,12 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<ul>
+<li>Based on the estimates of alcohol_use_cat, we can see that compared
+to heavy drinkers, light drinkers and moderate drinkers both have
+significant lower total cholesterol. Light drinkers have lower risk than
+moderate drinkers. This is consistent with our hypothesis</li>
+</ul>
 </div>
 </div>
 <div
@@ -1660,9 +1679,11 @@ id="explanatory-variables-cotinine-physical_activity-and-alcohol_use_cat"
 class="section level3">
 <h3>4. explanatory variables: cotinine, physical_activity, and
 alcohol_use_cat</h3>
-<p>fit_full: log(total_cholesterol) = cotinine + physical_activity +
-alcohol_use_cat + age + gender + race + marital_status +
-education_level_20 + poverty_level</p>
+<p>We assume that smoking (implied by cotinine), alcohol drinking, and
+physical activity could be potentially related to each other.
+Therefrore, a full model including these three variables makes
+sense.</p>
+<p><code>fit_full: log(total_cholesterol) = cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code></p>
 <pre class="r"><code>fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 fit_full |&gt; 
@@ -1831,8 +1852,8 @@ Guidelines</td>
 </tbody>
 </table>
 </div>
-<div id="comparison-among-models-aic-还没改" class="section level3">
-<h3>5. Comparison among models: AIC (还没改)</h3>
+<div id="aic-value-selection" class="section level3">
+<h3>5.AIC value selection</h3>
 <pre class="r"><code>fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 test_aic = stepAIC(fit_full, direction = &quot;both&quot;, trace = FALSE)
@@ -2053,9 +2074,11 @@ for comparing is
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
 </div>
-<div id="comparison-among-models-cross-validation"
-class="section level3">
-<h3>8. Comparison among models: cross validation</h3>
+</div>
+<div id="model-comparison" class="section level2">
+<h2><em>Model comparison</em></h2>
+<div id="cross-validation" class="section level3">
+<h3>1. Cross validation</h3>
 <p>Based on the above steps, we now are comparing four models: fit_cot,
 fit_phy, fit_alc, and fit_full.</p>
 <pre class="r"><code>model_cv_df = 
@@ -2104,8 +2127,8 @@ cv_results |&gt;
 rmses.</li>
 </ul>
 </div>
-<div id="comparison-among-models-r-square" class="section level3">
-<h3>6. Comparison among models: r square</h3>
+<div id="r-square" class="section level3">
+<h3>2. r square</h3>
 <pre class="r"><code>rsquare_fit_cot = rsquare(fit_cot, data = model_df)
 rsquare_fit_phy = rsquare(fit_phy, data = model_df)
 rsquare_fit_alc = rsquare(fit_alc, data = model_df)
@@ -2136,25 +2159,23 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |&gt;
 values.</li>
 </ul>
 </div>
-<div id="conclusion" class="section level3">
-<h3>Conclusion</h3>
-<p>Based on the above model selection steps, we decide to use model
+</div>
+<div id="conclusion" class="section level2">
+<h2><em>Conclusion</em></h2>
+<p>We decide to use model
 <code>fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>
-as our final model.</p>
-<ul>
-<li>Backward, stepwise, AIC value methods all indicate that
-<code>fit_alc</code> is the best.</li>
-<li>With similar rmse distribution and r square, model
+as our final model. With similar rmse distribution and r square, model
 <code>fit_alc</code> is less complex than model
-<code>fit_full</code>.</li>
-<li>Then, we save this model as a RDS file for the following R shiny
-part.</li>
-</ul>
+<code>fit_full</code>.</p>
+</div>
+<div id="next" class="section level2">
+<h2><em>Next</em></h2>
+<p>We save this model as a RDS file for the next R shiny part:
+<strong>Predict your risk</strong>.</p>
 <pre class="r"><code>save_path = &quot;fit_alc.rds&quot;
 saveRDS(fit_alc, save_path)
 cat(&quot;Model saved as an RDS file:&quot;, save_path, &quot;\n&quot;)</code></pre>
 <pre><code>## Model saved as an RDS file: fit_alc.rds</code></pre>
-</div>
 </div>
 </div>
 

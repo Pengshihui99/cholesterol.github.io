@@ -1,7 +1,5 @@
 ---
-title: "Model"
-author: "Shihui Peng"
-date: "2023-12-04"
+title: "Model Building"
 output: 
   html_document:
     toc: true
@@ -56,9 +54,9 @@ ab_desire_df =
 ```
 
 
-# Description of variables features
+# **Variables features**
 
-## Continuous variables
+## *Continuous variables*
 
 ### Methods
 
@@ -137,7 +135,7 @@ std_ab_desire = sapply(list_conti_ab_desire, sd) |>
   rename(case_std = "sapply(list_conti_ab_desire, sd)")
 ```
 
-### description table
+### Description table
 
 ```{r}
 # combind - continuous
@@ -150,7 +148,7 @@ conti_des_df = conti_des_df[, -grep("variable", colnames(conti_des_df))] |>
 conti_des_df
 ```
 
-## Binary and categorical variables
+## *Binary and categorical variables*
 
 ### Methods
 
@@ -267,7 +265,7 @@ cat_count_case = lapply(cat_vars_case, count_case_function) |>
   as.data.frame()
 ```
 
-### description table
+### Description table
 
 ```{r, message=FALSE}
 cat_des_df =
@@ -280,11 +278,11 @@ cat_des_df = cat_des_df[, !duplicated(names(cat_des_df))] |>
 cat_des_df
 ```
 
-# Building model
+# **Building model**
 
-In this study, out response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1)cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`).  We decide to analyze the association step by step. (significance level = 0.05)
+In this study, out response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1) cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`).  We decide to analyze the association step by step. (significance level = 0.05)
 
-## Check the dataset
+## *Check the dataset*
 
 ```{r, message=FALSE, warning=FALSE}
 
@@ -310,13 +308,18 @@ model_df |>
 * Based on the scatterplot, we can find slightly negative linear trends, but there is heteroscedasticity problem. Also, based on the density plot, we can find that the distribution of y is asymmetry. Therefore, we decide to use linear regression model with log-transformation on response variable (y) `total_cholesterol` for the following models.
 
 
-## Model selection
+## *Model selection*
+
+Here, we use seven ways to build up different models. For the first four models, we build them based on epidemiological views. For the sixth, seventh, and eighth models, we build them based on biostatistics knowledge (AIC value, backward selection, and stepwise selection) combined with epidemiological views.
 
 
 ### 1. main explanatory variable: cotinine
 
+We hypothesis that cotinine, an indicator of exposure of smoking, is positively associated with the log of total cholesterol.
 
-#### Univariable linear regression: total_cholesterol = cotinine
+#### 1) Univariable linear regression
+
+`fit_1: log(total_cholesterol) = cotinine`
 
 ```{r, message=FALSE, warning=FALSE}
 fit_1 = lm(log(total_cholesterol) ~ cotinine, data = model_df)
@@ -332,13 +335,13 @@ model_df |>
   stat_qq_line()
 ```
 
-* We can see that cotinine is significantly associated with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
+* We can see that cotinine is **significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
 * Therefore, we move forward to build multivariable regression.
 
 
-#### Multivariable linear regression
+#### 2) Multivariable linear regression
 
-fit_cot: log(total_cholesterol) = cotinine + age + gender + race + marital_status + education_level_20 + poverty_level
+`fit_cot: log(total_cholesterol) = cotinine + age + gender + race + marital_status + education_level_20 + poverty_level`
 
 ```{r}
 fit_cot = lm(log(total_cholesterol) ~ cotinine + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
@@ -348,11 +351,16 @@ fit_cot |>
   knitr::kable(digits = 3)
 ```
 
+* Based on the estimates of alcohol_use_cat, we can see no association between cotinine and log total cholesterol. This is not consistent with our hypothesis, but the estimate is not significant at 0.05 level of significance.
+
 
 ### 2. main explanatory variable: physical_activity
 
+We hypothesis that physical activity is negatively associated with the log of total cholesterol.
 
-#### Univariable linear regression: total_cholesterol = physical_activity
+#### 1) Univariable linear regression
+
+`fit_2: total_cholesterol = physical_activity`
 
 ```{r, message=FALSE}
 fit_2 = lm(log(total_cholesterol) ~ physical_activity, data = model_df)
@@ -368,13 +376,13 @@ model_df |>
   stat_qq_line()
 ```
 
-* We can see that physical_activity is not significantly associated with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
+* We can see that physical_activity is **not significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
 * Therefore, we move forward to build multivariable regression.
 
 
-#### Multivariable linear regression
+#### 2) Multivariable linear regression
 
-fit_phy: log(total_cholesterol) = physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level
+`fit_phy: log(total_cholesterol) = physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level`
 
 ```{r}
 fit_phy = lm(log(total_cholesterol) ~ physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
@@ -384,11 +392,16 @@ fit_phy |>
   knitr::kable(digits = 3)
 ```
 
+* Based on the estimates of alcohol_use_cat, we can see that compared to population with light activity, population with moderate activity and vigorous activity both have higher total cholesterol. This is not consistent with our hypothesis, but the association is not significant at 0.05 level of significance.
+
 
 ### 3. main explanatory variable: alcohol_use_cat
 
+We hypothesis that alcohol drinking is positively associated with the log of total cholesterol.
 
-#### Univariable linear regression: total_cholesterol = alcohol_use_cat
+#### 1) Univariable linear regression
+
+`fit_3: total_cholesterol = alcohol_use_cat`
 
 ```{r, message=FALSE, warning=FALSE}
 fit_3 = lm(log(total_cholesterol) ~ alcohol_use_cat, data = model_df)
@@ -404,13 +417,13 @@ model_df |>
   stat_qq_line()
 ```
 
-* We can see that alcohol_use_cat is significantly associated with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
+* We can see that alcohol_use_cat is **significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
 * Therefore, we move forward to build multivariable regression.
 
 
-#### Multivariable linear regression
+#### 2) Multivariable linear regression
 
-fit_alc: log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level
+`fit_alc: log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`
 
 ```{r}
 fit_alc = lm(log(total_cholesterol) ~ alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
@@ -420,10 +433,13 @@ fit_alc |>
   knitr::kable(digits = 3)
 ```
 
+* Based on the estimates of alcohol_use_cat, we can see that compared to heavy drinkers, light drinkers and moderate drinkers both have significant lower total cholesterol. Light drinkers have lower risk than moderate drinkers. This is consistent with our hypothesis
 
 ### 4. explanatory variables: cotinine, physical_activity, and alcohol_use_cat
 
-fit_full: log(total_cholesterol) = cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level
+We assume that smoking (implied by cotinine), alcohol drinking, and physical activity could be potentially related to each other. Therefrore, a full model including these three variables makes sense.
+
+`fit_full: log(total_cholesterol) = cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`
 
 ```{r}
 fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
@@ -434,7 +450,8 @@ fit_full |>
 ```
 
 
-### 5. Comparison among models: AIC (还没改)
+### 5.AIC value selection
+
 ```{r}
 fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
@@ -458,6 +475,7 @@ fit_backward = step(fit_full, direction = "backward")
 * Based on the output, we can find the best model optimized by backward selection summary for full model with log transfermation on y is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable age into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
 
 ### 7. Stepwise selection on full model
+
 ```{r}
 fit_stepwise = step(fit_full)
 # stepwise result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level
@@ -465,7 +483,10 @@ fit_stepwise = step(fit_full)
 
 * Based on the output, we can find the best model optimized by stepwise selection summary for full model with log transfermation on y is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable age into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
 
-### 8. Comparison among models: cross validation
+
+## *Model comparison*
+
+### 1. Cross validation
 
 Based on the above steps, we now are comparing four models: fit_cot, fit_phy, fit_alc, and fit_full.
 
@@ -515,7 +536,7 @@ cv_results |>
 * Based on the violin plot, these four models have similar spread of rmses.
 
 
-### 6. Comparison among models: r square
+### 2. r square
 
 ```{r}
 rsquare_fit_cot = rsquare(fit_cot, data = model_df)
@@ -530,13 +551,13 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |>
 * Based on the violin plot, these four models have similar r square values.
 
 
-### Conclusion
+## *Conclusion*
 
-Based on the above model selection steps, we decide to use model `fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level` as our final model.
+We decide to use model `fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level` as our final model. With similar rmse distribution and r square, model `fit_alc` is less complex than model `fit_full`.
 
-* Backward, stepwise, AIC value methods all indicate that `fit_alc` is the best.
-* With similar rmse distribution and r square, model `fit_alc` is less complex than model `fit_full`.
-* Then, we save this model as a RDS file for the following R shiny part.
+## *Next*
+
+We save this model as a RDS file for the next R shiny part: **Predict your risk**.
 
 ```{r}
 save_path = "fit_alc.rds"
