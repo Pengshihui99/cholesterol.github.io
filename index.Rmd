@@ -25,15 +25,16 @@ Following in-depth [Exploratory Analysis](Exploratory-Analysis.html), we pinpoin
 
 ![](images/Risk Factors.jpg){width=60%}
 
-### **Report**
 
-Explore our [Report](report.html) to discover the pivotal insights derived from our analysis!
-
-### **Check my cholesterol level!**
+### **Check your cholesterol level!**
 
 Just enter some simple information to get your current cholesterol levels.
 
 Click **"Predict your risk"** to take the test!
+
+### **Report**
+
+Explore our [Report](report.html) to discover the pivotal insights derived from our analysis!
 
 ### **Project Overview**
 Click on the video below to explore the capabilities of this site and enjoy a summary of our key highlights.
@@ -49,3 +50,5 @@ Click on the video below to explore the capabilities of this site and enjoy a su
 * Yuxuan Wang (yw3995)
 * Ruiqi Xue (rx2236)
 * Jiangyuan Zhu (jz3573)
+
+Click [here](About-Us.html) to learn more about us.
