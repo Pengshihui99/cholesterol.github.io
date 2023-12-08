@@ -1,5 +1,5 @@
 ---
-title: "Home Page"
+title: "Exploring the Relationship Between Cholesterol and Your Body"
 output: 
   html_document:
     toc: true
@@ -7,17 +7,45 @@ output:
     theme: cosmo
 ---
 
-# Welcome to the website
+### **What are the adverse effects of high cholesterol levels on our health?**
 
-```{r}
-# draft
-#![](images/homepage.jpg){width=40%}
+Nearly 40% of adults in the United States grapple with high cholesterol levels, defined as total blood cholesterol equal to or exceeding 200 mg/dL. This elevated cholesterol poses a significant risk for heart disease and stroke, both prominent contributors to mortality in the United States. (CDC, 2023)
 
-```
+![](images/cholesterol.jpg){width=60%}
 
+### **Cholesterol Prevalence Overview Throughout the United States**
 
-* [Prevalence EDA](eda.html)
-* [Clean Data](clean.html)
-* [Exploratory Analysis](Exploratory-Analysis.html)
-* [Build Model](model.html)
-* [Report](report.html)
+Upon data analysis, we condensed the cholesterol risk across different locations in the United States, identifying key behavioral factors predominantly associated with the risk through correlation analysis.
+
+read [Prevalence EDA](eda.html) here.
+
+### **Cholesterol-Associated Risk Factors**
+
+Following in-depth [Exploratory Analysis](Exploratory-Analysis.html), we pinpointed the primary influencers of cholesterol and constructed the final [Build Model](model.html) for predicting individual cholesterol levels.
+
+![](images/Risk Factors.jpg){width=60%}
+
+### **Report**
+
+Explore our [Report](report.html) to discover the pivotal insights derived from our analysis!
+
+### **Check my cholesterol level!**
+
+Just enter some simple information to get your current cholesterol levels.
+
+Click **"Predict your risk"** to take the test!
+
+### **Project Overview**
+Click on the video below to explore the capabilities of this site and enjoy a summary of our key highlights.
+
+[video]
+
+### **Lovely Creators**
+
+(Names ranked by surname)
+
+* Shihui Peng (sp4170)
+* Jingyu Wang (jw4348)
+* Yuxuan Wang (yw3995)
+* Ruiqi Xue (rx2236)
+* Jiangyuan Zhu (jz3573)
