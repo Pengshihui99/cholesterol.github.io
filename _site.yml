@@ -5,7 +5,7 @@ navbar:
   right:
     - text: "Prevalence Analysis"
       href: eda.html
-    - text: "Modeling"
+    - text: "Analysis"
       menu:
         - text: "Data Sources"
           href: source.html
@@ -17,6 +17,10 @@ navbar:
       href: https://ruiqixue.shinyapps.io/shiny/
     - text: "Project Report"
       href: report.html
+    - text: "About Us"
+      href: About-Us.html
+    - icon: fa-github fa-lg
+      href: https://github.com/Pengshihui99/cholesterol.github.io
     - icon: fa-envelope fa-lg
       menu:
         - text: "Ruiqi Xue"
@@ -29,10 +33,6 @@ navbar:
           href: mailto:jw4348@cumc.columbia.edu
         - text: "Jiangyuan Zhu"
           href: mailto:jz3573@cumc.columbia.edu
-    - text: "About Us"
-      href: About-Us.html
-    - text: "Our Github Repository"
-      href: https://github.com/Pengshihui99/cholesterol.github.io
 
       
 output:
