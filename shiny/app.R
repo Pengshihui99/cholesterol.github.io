@@ -22,7 +22,7 @@ alcohols = c("Never in the last year", "1 to 2 times in the last year", "3 to 6 
 
 shinyApp(
   ui = fluidPage(
-    titlePanel("Regression Model Prediction"),
+    titlePanel("Regression Model Prediction for Your Risk of High Cholesterol"),
     
     sidebarLayout(
       sidebarPanel(
@@ -62,10 +62,11 @@ shinyApp(
         actionButton("predict_button", "Predict")
       ),
       mainPanel(
-        img(src = "shy_image1.jpg", width = "80%", height = "80%"),
-        
+        #img(src = "shy_image2.png", width = "100%", height = "100%"),
+        imageOutput("image1"),
         verbatimTextOutput("prediction_output2"),
-        verbatimTextOutput("prediction_output")
+        verbatimTextOutput("prediction_output"),
+        imageOutput("image2"),
       )
     )
   ),
@@ -98,7 +99,7 @@ shinyApp(
       
       output$prediction_output2 = renderText({
         # Your prediction result text
-        paste("Considering only these variables, your tend to have a cholesterol level approximately at: ", exp(prediction_result), "mg/dL.")
+        paste("Considering only these variables, you tend to have a cholesterol level approximately at: ", exp(prediction_result), "mg/dL.")
       })
       
       output$prediction_output = renderText({
@@ -106,6 +107,19 @@ shinyApp(
         paste("Your risk of high cholesterol is: ", case_when(prediction_result > log(200) ~ "Above Normal Level",
                                                               prediction_result <= log(200) ~ "At Normal Level"))
       })
+      
+      output$image1 = renderImage({
+        
+        list(src = "shy_image1.jpg", width = "60%", height = "100%")
+        
+      }, deleteFile = FALSE)
+      
+      output$image2 = renderImage({
+        
+        list(src = "shy_image2.png", width = "80%", height = "120%")
+        
+      }, deleteFile = FALSE)
+      
     })
   }
 )
