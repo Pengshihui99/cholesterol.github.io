@@ -17,7 +17,11 @@ library(plotly)
 library(tools)
 ```
 
+## Data 
 
+### Data Overview
+
+### Data Cleaning
 ```{r, message=FALSE, warning=FALSE}
 prevalence_df = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
   janitor::clean_names() |>
@@ -146,120 +150,45 @@ merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
 merged_total = left_join(merged_2021, merged_2020)
 ```
 
+## Visulization
 
-### Here is the prevalence plot!
-
-```{r warning=FALSE, warning=FALSE}
-
-x_range = range(c(pull(merged_total, chol_pre_2021), pull(merged_total, chol_pre_2020)))
-
-y_range = range(c(pull(merged_total, binge_pre), pull(merged_total, lpa_pre), pull(merged_total, smoking_pre), pull(merged_total, insurance_pre), pull(merged_total, cholscreen_pre), pull(merged_total, sleep_pre)))
-
-prevalence_plot = 
-merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~binge_pre, type = 'scatter', size = ~total_popu, sizes = c(50, 250), mode = 'markers', opacity = 0.75, name = 'Binge Drinking', showlegend = TRUE, visible = TRUE) |>
-  add_trace(x = ~chol_pre_2021, y = ~lpa_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'No Leisure-time Physical Activity', showlegend = TRUE, visible = TRUE) |>
-  add_trace(x = ~chol_pre_2021, y = ~smoking_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Smoking Currently', showlegend = TRUE, visible = TRUE) |>
-  add_trace(x = ~chol_pre_2021, y = ~insurance_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Lack of Health Insurance Currently', showlegend = TRUE, visible = TRUE) |>
-  add_trace(x = ~chol_pre_2021, y = ~cholscreen_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Cholesterol Screening', showlegend = TRUE, visible = TRUE) |>
-  add_trace(x = ~chol_pre_2021, y = ~sleep_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Sleep Less Than 7 Hours', showlegend = TRUE, visible = TRUE) |>
-  
-  layout(title = list(text = 'Prevalence of High Cholesterol v.s. Health-Affecting Behaviors', x = 0.08),
-         titlefont = list(size = 15),
-         xaxis = list(title = 'Prevalence of High Cholesterol',  tickformat = '.0%', showline = TRUE, range = x_range + c(-0.01, 0.01)),
-         yaxis = list(title = 'Prevalence of Health-Affecting Behavior', range = y_range + c(-0.05, 0.05), tickformat = '.0%', showline = TRUE))
-         
-
-prevalence_plot
-
-fig1 = merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~binge_pre, type = 'scatter', size = ~total_popu, sizes = c(25, 125), mode = 'markers', opacity = 0.75, name = 'Binge Drinking', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
-
-fig2 = merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~lpa_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'No Leisure-time Physical Activity', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%')) 
-
-
-fig3 = merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~smoking_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Smoking Currently', showlegend = TRUE, visible = TRUE) |>
-layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%')) 
-
-fig4 = merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~insurance_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Lack of Health Insurance Currently', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
-
-fig5 = merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~cholscreen_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Cholesterol Screening', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
-
-fig6 = merged_total |>
-  plot_ly() |>
-  add_trace(x = ~chol_pre_2021, y = ~sleep_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Sleep Less Than 7 Hours', showlegend = TRUE, visible = TRUE) |>
-  layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
-
-pre_sub_figs = subplot(fig1, fig2, fig3, fig4, fig5, fig6, nrows = 2) |>
-  layout(title = list(text = 'Prevalence of High Cholesterol v.s. Health-Affecting Behaviors', x = 0.08), titlefont = list(size = 15))
-
-pre_sub_figs
-  
-```
-
-### Find top health behaviors that has largest correlations with high cholesterol.
+### The U.S. High Cholesterol Map 
+This is to have an overview of the prevalence of high cholesterol among the nation.
 ```{r, message=FALSE, warning=FALSE}
 
-cor_table = data.frame(behavior = character(), correlation = numeric(), stringsAsFactors = FALSE)
+library(scales)
 
-behavs = colnames(merged_2021[4:8])
+library(sf)
 
-for (each in behavs) {
-  new_row = data.frame(behavior = substr(each, 1, nchar(each) - 4), correlation = round(cor(pull(merged_2021, chol_pre_2021), pull(merged_2021, each)), digits = 4))
-  
-  cor_table = rbind(cor_table, new_row)
-}
+states = read_sf("data/cb_2022_us_state_500k/") |>
+  rename("state_abbr" = "STUSPS")
 
-sleep_row = data.frame(behavior = 'sleep', correlation = round(cor(pull(merged_2020, chol_pre_2020), pull(merged_2020, sleep_pre)), digits = 4))
+chol_small_df = merged_total |>
+  select(state_abbr, chol_pre_2021)
 
-cor_table = rbind(cor_table, sleep_row)
-cor_table = arrange(cor_table, desc(abs(correlation)))
+state_to_remove = c("GU", "MP", "VI", "PR", "AS", "AK", "HI")
 
-cor_table = cor_table |>
-  mutate(behavior = case_match(behavior,
-                               "lpa" ~ "No Leisure-time Physical Activity",
-                               "sleep" ~ "Sleep Less Than 7 Hours",
-                               "smoking" ~ "Smoking Currently",
-                               "insurance" ~ "Lack of Health Insurance Currently",
-                               "cholscreen" ~ "Cholesterol Screening",
-                               "binge" ~ "Binge Drinking"
-                               ),
-         behavior = factor(behavior, levels = behavior)) |>
-  rename("Behavior" = behavior,
-         "Correlation" = correlation) 
+geo_df = left_join(states, chol_small_df) |>
+  rename("STUSPS" = "state_abbr") |>
+  filter(! STUSPS %in% state_to_remove) 
 
+map_plot = ggplot(geo_df) +
+  geom_sf(aes(fill = chol_pre_2021, text = paste("State: ", NAME, "<br>Prevalence: ", chol_pre_2021)))+
+  scale_fill_distiller("prevalence", palette="YlOrRd") +
+  theme_minimal() +
+  theme(axis.ticks = element_blank(), axis.text = element_blank()) +
+  labs(title = "Prevalence of High Cholesterol by State")
 
-knitr::kable(cor_table)
+state_map = ggplotly(map_plot, tooltip = "text") 
 
-```
-
-### Use a bar plot to visulize it.
-
-```{r, message=FALSE, warning=FALSE}
-
-cor_bar = plot_ly(cor_table, x = ~Behavior, y = ~Correlation, type = 'bar', text = ~Correlation, texttemplate = '%{y:.2f}', textposition = 'outside', opacity = 0.8, marker = list(color = "MidnightBlue")) |>
-  layout(title = 'Correlation Between High Cholesterol and Health Behaviors',
-         xaxis = list(title = 'Behavior', tickangle=-30),
-         yaxis = list(title = 'Correlation')) 
  
-  
+state_map
 
-cor_bar
+
 ```
 
-
-### Boxplot of prevalence of Health Behaviors
-
+### Health Behaviors Prevalence Boxplot
+Draw a boxplot to visualize the prevalence of each health behavior that is related to and has potential association with high cholesterol.
 ```{r, message=FALSE, warning=FALSE}
 chol_pivot = merged_total |>
   select(state_abbr, chol_pre_2020, chol_pre_2021) |>
@@ -309,44 +238,122 @@ box_plot = subplot(plot1, plot2)
 box_plot
 ```
 
-### U.S. High Cholesterol Map 
-```{r, message=FALSE, warning=FALSE}
 
-library(scales)
+### Association Trend Plot 
+This is to observe trendings of associations between prevalence of high cholesterol and prevalence of related health-affecting behaviors.
+```{r warning=FALSE, warning=FALSE}
 
-library(sf)
+x_range = range(c(pull(merged_total, chol_pre_2021), pull(merged_total, chol_pre_2020)))
 
-states = read_sf("data/cb_2022_us_state_500k/") |>
-  rename("state_abbr" = "STUSPS")
+y_range = range(c(pull(merged_total, binge_pre), pull(merged_total, lpa_pre), pull(merged_total, smoking_pre), pull(merged_total, insurance_pre), pull(merged_total, cholscreen_pre), pull(merged_total, sleep_pre)))
 
-chol_small_df = merged_total |>
-  select(state_abbr, chol_pre_2021)
+prevalence_plot = 
+merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~binge_pre, type = 'scatter', size = ~total_popu, sizes = c(50, 250), mode = 'markers', opacity = 0.75, name = 'Binge Drinking', showlegend = TRUE, visible = TRUE) |>
+  add_trace(x = ~chol_pre_2021, y = ~lpa_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'No Leisure-time Physical Activity', showlegend = TRUE, visible = TRUE) |>
+  add_trace(x = ~chol_pre_2021, y = ~smoking_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Smoking Currently', showlegend = TRUE, visible = TRUE) |>
+  add_trace(x = ~chol_pre_2021, y = ~insurance_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Lack of Health Insurance Currently', showlegend = TRUE, visible = TRUE) |>
+  add_trace(x = ~chol_pre_2021, y = ~cholscreen_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Cholesterol Screening', showlegend = TRUE, visible = TRUE) |>
+  add_trace(x = ~chol_pre_2021, y = ~sleep_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(50, 250), name = 'Sleep Less Than 7 Hours', showlegend = TRUE, visible = TRUE) |>
+  
+  layout(title = list(text = 'Prevalence of High Cholesterol v.s. Health-Affecting Behaviors', x = 0.08),
+         titlefont = list(size = 15),
+         xaxis = list(title = 'Prevalence of High Cholesterol',  tickformat = '.0%', showline = TRUE, range = x_range + c(-0.01, 0.01)),
+         yaxis = list(title = 'Prevalence of Health-Affecting Behavior', range = y_range + c(-0.05, 0.05), tickformat = '.0%', showline = TRUE))
+         
 
-state_to_remove = c("GU", "MP", "VI", "PR", "AS", "AK", "HI")
-
-geo_df = left_join(states, chol_small_df) |>
-  rename("STUSPS" = "state_abbr") |>
-  filter(! STUSPS %in% state_to_remove) 
-
-map_plot = ggplot(geo_df) +
-  geom_sf(aes(fill = chol_pre_2021, text = paste("State: ", NAME, "<br>Prevalence: ", chol_pre_2021)))+
-  scale_fill_distiller("prevalence", palette="YlOrRd") +
-  theme_minimal() +
-  theme(axis.ticks = element_blank(), axis.text = element_blank()) +
-  labs(title = "Prevalence of High Cholesterol by State")
-
-state_map = ggplotly(map_plot, tooltip = "text") 
-
- 
-state_map
-
+prevalence_plot
 
 ```
 
+### Sub-Association Trending Plot
+To have a clearer view of each behavior, let's "zoom in" and observe the trending in more detail.
+```{r}
+fig1 = merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~binge_pre, type = 'scatter', size = ~total_popu, sizes = c(25, 125), mode = 'markers', opacity = 0.75, name = 'Binge Drinking', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
+
+fig2 = merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~lpa_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'No Leisure-time Physical Activity', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%')) 
 
 
+fig3 = merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~smoking_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Smoking Currently', showlegend = TRUE, visible = TRUE) |>
+layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%')) 
+
+fig4 = merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~insurance_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Lack of Health Insurance Currently', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
+
+fig5 = merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~cholscreen_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Cholesterol Screening', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
+
+fig6 = merged_total |>
+  plot_ly() |>
+  add_trace(x = ~chol_pre_2021, y = ~sleep_pre, type = 'scatter', mode = 'markers', size = ~total_popu, sizes = c(25, 125), name = 'Sleep Less Than 7 Hours', showlegend = TRUE, visible = TRUE) |>
+  layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
+
+pre_sub_figs = subplot(fig1, fig2, fig3, fig4, fig5, fig6, nrows = 2) |>
+  layout(title = list(text = 'Prevalence of High Cholesterol v.s. Health-Affecting Behaviors', x = 0.08), titlefont = list(size = 15))
+
+pre_sub_figs
+  
+```
+
+## Top behaviors affecting high cholesterol in terms of correlation
+
+### Calculate the correlation between each behavior and high cholesterol
+```{r, message=FALSE, warning=FALSE}
+
+cor_table = data.frame(behavior = character(), correlation = numeric(), stringsAsFactors = FALSE)
+
+behavs = colnames(merged_2021[4:8])
+
+for (each in behavs) {
+  new_row = data.frame(behavior = substr(each, 1, nchar(each) - 4), correlation = round(cor(pull(merged_2021, chol_pre_2021), pull(merged_2021, each)), digits = 4))
+  
+  cor_table = rbind(cor_table, new_row)
+}
+
+sleep_row = data.frame(behavior = 'sleep', correlation = round(cor(pull(merged_2020, chol_pre_2020), pull(merged_2020, sleep_pre)), digits = 4))
+
+cor_table = rbind(cor_table, sleep_row)
+cor_table = arrange(cor_table, desc(abs(correlation)))
+
+cor_table = cor_table |>
+  mutate(behavior = case_match(behavior,
+                               "lpa" ~ "No Leisure-time Physical Activity",
+                               "sleep" ~ "Sleep Less Than 7 Hours",
+                               "smoking" ~ "Smoking Currently",
+                               "insurance" ~ "Lack of Health Insurance Currently",
+                               "cholscreen" ~ "Cholesterol Screening",
+                               "binge" ~ "Binge Drinking"
+                               ),
+         behavior = factor(behavior, levels = behavior)) |>
+  rename("Behavior" = behavior,
+         "Correlation" = correlation) 
 
 
+knitr::kable(cor_table)
 
+```
+
+### Correlation Bar Chart
+Use a bar chart to visualize it.
+```{r, message=FALSE, warning=FALSE}
+
+cor_bar = plot_ly(cor_table, x = ~Behavior, y = ~Correlation, type = 'bar', text = ~Correlation, texttemplate = '%{y:.2f}', textposition = 'outside', opacity = 0.8, marker = list(color = "MidnightBlue")) |>
+  layout(title = 'Correlation Between High Cholesterol and Health Behaviors',
+         xaxis = list(title = 'Behavior', tickangle=-30),
+         yaxis = list(title = 'Correlation')) 
+ 
+  
+
+cor_bar
+```
 
 
