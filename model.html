@@ -352,7 +352,7 @@ div.tocify {
   <a href="https://ruiqixue.shinyapps.io/shiny/">Predict Your Risk</a>
 </li>
 <li>
-  <a href="Exploratory-Analysis.html">Project Report</a>
+  <a href="report.html">Project Report</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -2179,6 +2179,159 @@ values.</li>
 as our final model. With similar rmse distribution and r square, model
 <code>fit_alc</code> is less complex than model
 <code>fit_full</code>.</p>
+<p>Take a deeper look at the estiamtes of model
+<code>fit_alc</code>s:</p>
+<pre class="r"><code>fit_alc |&gt; 
+  broom::tidy() |&gt; 
+  knitr::kable(digits = 3)</code></pre>
+<table>
+<colgroup>
+<col width="60%" />
+<col width="9%" />
+<col width="10%" />
+<col width="10%" />
+<col width="8%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">term</th>
+<th align="right">estimate</th>
+<th align="right">std.error</th>
+<th align="right">statistic</th>
+<th align="right">p.value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">(Intercept)</td>
+<td align="right">5.281</td>
+<td align="right">0.018</td>
+<td align="right">296.615</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">alcohol_use_catLight Drinker</td>
+<td align="right">-0.066</td>
+<td align="right">0.009</td>
+<td align="right">-7.277</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">alcohol_use_catModerate Drinker</td>
+<td align="right">-0.046</td>
+<td align="right">0.009</td>
+<td align="right">-4.884</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">age</td>
+<td align="right">0.000</td>
+<td align="right">0.000</td>
+<td align="right">1.045</td>
+<td align="right">0.296</td>
+</tr>
+<tr class="odd">
+<td align="left">genderMale</td>
+<td align="right">-0.056</td>
+<td align="right">0.006</td>
+<td align="right">-9.141</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">raceNon-Hispanic Asian</td>
+<td align="right">0.019</td>
+<td align="right">0.013</td>
+<td align="right">1.516</td>
+<td align="right">0.130</td>
+</tr>
+<tr class="odd">
+<td align="left">raceNon-Hispanic Black</td>
+<td align="right">-0.038</td>
+<td align="right">0.009</td>
+<td align="right">-4.099</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="even">
+<td align="left">raceNon-Hispanic White</td>
+<td align="right">-0.015</td>
+<td align="right">0.009</td>
+<td align="right">-1.734</td>
+<td align="right">0.083</td>
+</tr>
+<tr class="odd">
+<td align="left">raceOther Race</td>
+<td align="right">0.010</td>
+<td align="right">0.015</td>
+<td align="right">0.699</td>
+<td align="right">0.485</td>
+</tr>
+<tr class="even">
+<td align="left">marital_statusNever married</td>
+<td align="right">-0.039</td>
+<td align="right">0.009</td>
+<td align="right">-4.587</td>
+<td align="right">0.000</td>
+</tr>
+<tr class="odd">
+<td align="left">marital_statusWidowed/Divorced/Separated</td>
+<td align="right">0.012</td>
+<td align="right">0.008</td>
+<td align="right">1.504</td>
+<td align="right">0.133</td>
+</tr>
+<tr class="even">
+<td align="left">education_level_20College graduate or above</td>
+<td align="right">0.021</td>
+<td align="right">0.012</td>
+<td align="right">1.758</td>
+<td align="right">0.079</td>
+</tr>
+<tr class="odd">
+<td align="left">education_level_20High school graduate/GED or
+equivalent</td>
+<td align="right">-0.009</td>
+<td align="right">0.011</td>
+<td align="right">-0.815</td>
+<td align="right">0.415</td>
+</tr>
+<tr class="even">
+<td align="left">education_level_20Less than 9th grade</td>
+<td align="right">0.031</td>
+<td align="right">0.017</td>
+<td align="right">1.852</td>
+<td align="right">0.064</td>
+</tr>
+<tr class="odd">
+<td align="left">education_level_20Some college or AA degree</td>
+<td align="right">0.008</td>
+<td align="right">0.011</td>
+<td align="right">0.730</td>
+<td align="right">0.465</td>
+</tr>
+<tr class="even">
+<td align="left">poverty_levelBelow 130% of Poverty Guidelines</td>
+<td align="right">-0.014</td>
+<td align="right">0.008</td>
+<td align="right">-1.881</td>
+<td align="right">0.060</td>
+</tr>
+<tr class="odd">
+<td align="left">poverty_levelBetween 130% and 185% of Poverty
+Guidelines</td>
+<td align="right">0.002</td>
+<td align="right">0.009</td>
+<td align="right">0.277</td>
+<td align="right">0.782</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Compared to heavy drinkers, light drinkers would have 0.066mg/dL
+less log(total_cholesterol) and moderate drinkers would have 0.046mg/dL
+less log(total_cholesterol), adjusting for age, gender, race, marital
+status, education level, and poverty level, based on this sample. This
+association is significant at 0.05 level of significance.</li>
+</ul>
 <p>Then, We save this model as a RDS file for the next R shiny part:
 <strong>Predict your risk</strong>.</p>
 <pre class="r"><code>save_path = &quot;fit_alc.rds&quot;

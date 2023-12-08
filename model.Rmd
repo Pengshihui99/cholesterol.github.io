@@ -559,6 +559,17 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |>
 
 We decide to use model `fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level` as our final model. With similar rmse distribution and r square, model `fit_alc` is less complex than model `fit_full`.
 
+Take a deeper look at the estiamtes of model `fit_alc`s:
+```{r}
+fit_alc |> 
+  broom::tidy() |> 
+  knitr::kable(digits = 3)
+```
+
+* Compared to heavy drinkers, light drinkers would have 0.066mg/dL less log(total_cholesterol) and moderate drinkers would have 0.046mg/dL less log(total_cholesterol), adjusting for age, gender, race, marital status, education level, and poverty level, based on this sample. This association is significant at 0.05 level of significance.
+
+
+
 Then, We save this model as a RDS file for the next R shiny part: **Predict your risk**.
 
 ```{r}
@@ -566,3 +577,4 @@ save_path = "fit_alc.rds"
 saveRDS(fit_alc, save_path)
 cat("Model saved as an RDS file:", save_path, "\n")
 ```
+
