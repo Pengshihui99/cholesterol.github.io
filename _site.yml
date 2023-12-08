@@ -16,7 +16,7 @@ navbar:
     - text: "Predict Your Risk"
       href: https://ruiqixue.shinyapps.io/shiny/
     - text: "Project Report"
-      href: Exploratory-Analysis.html
+      href: report.html
     - icon: fa-envelope fa-lg
       menu:
         - text: "Ruiqi Xue"

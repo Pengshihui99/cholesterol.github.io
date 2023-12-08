@@ -50,7 +50,7 @@ shinyApp(
                     selected = "College graduate or above"),
         
         radioButtons(inputId = "income_choice", 
-                     label = h3("Select average family income:"),
+                     label = h3("Select average annual family income:"),
                      choices = incomes, 
                      selected = "Greater than $13,856"),
         
