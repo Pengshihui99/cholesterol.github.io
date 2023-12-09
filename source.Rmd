@@ -41,9 +41,134 @@ For part 2, the resource is from the program [The National Health and Nutrition 
 
 ## **Data Import and Tidy**
 ### *Part 1: PLACES: Local Data for Better Health*
-First, we input geographic prevalence data into the USA’s map to show the difference of cholesterol prevalence across the nation. We join the map data frame and prevalence dataframe by state abbreviation. It is worth nothing that when mapping, we exclude HI and AK for better visualization, as including them will lead to a skewing view of map. FL data is missing in the prevalence data. But we include them into all of our other data analysis process.
+Firstly, we filter six health-related variables, including binge drinking, currently smoking, no leisure-time physical activity (physical activity), lacking health insurance, cholesterol screening, and sleep less than 7 hours (lacking sleep) and pivot longer for easier reading and better visualization. We calculate state level prevalence by organizing and calculation county level data. We join the map data frame and prevalence dataframe by state abbreviation. we link geographic prevalence data into the USA’s map to show the distribution of cholesterol prevalence across the nation. 
 
-Second, we filter six health-related variables, including binge drinking, currently smoking, no leisure-time physical activity (physical activity), lacking health insurance, cholesterol screening, and sleep less than 7 hours (lacking sleep) and pivot longer for easier reading and better visualization. We first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
+It is worth nothing that when mapping, we exclude HI and AK for better visualization, as including them will lead to a skewing view of map. FL data is missing in the prevalence data. But we include them into all of our other data analysis process.
+
+Secondly, We first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
+```{r, message=FALSE, warning=FALSE}
+
+
+library(tidyverse)
+library(purrr)
+library(dplyr)
+library(plotly)
+library(tools)
+
+prevalence_df = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
+  janitor::clean_names() |>
+  select(year, state_abbr, category, measure, data_value, total_population, category_id, measure_id, short_question_text) |>
+  filter(year == 2021)
+
+prevalence_outcome = prevalence_df |>
+  filter(category == "Health Outcomes")
+  
+prevalence_chol = prevalence_outcome |>
+  filter(measure_id == "HIGHCHOL") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(chol_pre_2021 = disease_popu / total_popu) |>
+  select(-disease_popu)
+  
+  
+prevalence_risk = prevalence_df |>
+  filter(category == "Health Risk Behaviors")
+  
+
+risk_lpa = prevalence_risk |>
+  filter(measure_id == "LPA") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(lpa_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+risk_binge = prevalence_risk |>
+  filter(measure_id == "BINGE") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(binge_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+risk_smoking = prevalence_risk |>
+  filter(measure_id == "CSMOKING") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(smoking_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+prevalence_prevention = prevalence_df |>
+  filter(category == "Prevention")
+
+prevention_insurance = prevalence_prevention |>
+  filter(measure_id == "ACCESS2") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(insurance_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+prevention_cholscreen = prevalence_prevention |>
+  filter(measure_id == "CHOLSCREEN") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(cholscreen_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+prevalence_df_2020 = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
+  janitor::clean_names() |>
+  select(year, state_abbr, category, measure, data_value, total_population, category_id, measure_id, short_question_text) |>
+  filter(year == 2020)
+
+risk_sleep_2020 = prevalence_df_2020 |>
+  filter(category == "Health Risk Behaviors") |>
+  filter(measure_id == "SLEEP") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(sleep_pre = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+
+prevalence_chol_2020 = prevalence_df |>
+  filter(category == "Health Outcomes") |>
+  filter(measure_id == "HIGHCHOL") |>
+  select(state_abbr, data_value, total_population) |>
+  mutate(dis_popu = as.integer(total_population * data_value * 0.01)) |>
+  group_by(state_abbr) |>
+  summarise(state_abbr, total_popu = sum(total_population), disease_popu = sum(dis_popu)) |>
+  distinct() |>
+  mutate(chol_pre_2020 = disease_popu / total_popu) |>
+  select(-disease_popu)
+
+merged_2021 = Reduce(function(df1, df2) left_join(df1, df2, by = c("state_abbr", "total_popu")), list(prevalence_chol, risk_binge, risk_lpa, risk_smoking, prevention_insurance, prevention_cholscreen))
+
+merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
+merged_total = left_join(merged_2021, merged_2020)
+```
+
 ### *Part 2: NHANES*
 The steps of data wrangling was presenting below:
 
@@ -217,7 +342,7 @@ combine_df %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
-<br>
+
 
 The final dataset for exploratory and statistical analysis contains **`r nrow(combine_df)`** observations and **`r ncol(combine_df)`** variables, including information about `r colnames(combine_df)`.
 
