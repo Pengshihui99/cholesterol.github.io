@@ -39,11 +39,11 @@ For part 2, the resource is from the program [The National Health and Nutrition 
 * **[P_ALQ](https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/P_ALQ.htm#ALQ121)**: Provides the third explanatory variable, subjects' drinking patterns in the past 12 months.
 * **[P_COT](https://wwwn.cdc.gov/Nchs/Nhanes/2017-2018/P_COT.htm)**: Provides the fourth explanatory variable, serum cotinine level, as the primary metabolites of nicotine to estimate the extent of tobacco use.
 
-## Data Import and Tidy
-### Part 1: PLACES: Local Data for Better Health
+## **Data Import and Tidy**
+### *Part 1: PLACES: Local Data for Better Health*
 The dataset has 229K rows and 21 columns initially. We filter the health outcome `high cholesterol` and 6 related factors (health-affecting behaviors) `No leisure-time physical activity`,`Sleep less than 7 hours`,`Binge drinking `,``,``,``.
 
-### Part 2: NHANES
+### *Part 2: NHANES*
 The steps of data wrangling was presenting below:
 
 - Imported multiple datasets distributed as XPT file using `read_xpt`.
