@@ -1010,19 +1010,19 @@ level = 0.05).</p>
 <h2><em>Check the dataset</em></h2>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point() +
-  labs(title = &quot;Total_cholesterol against Serum Cotinine&quot;, x = &quot;Serum cotinine (ng/ml)&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Total_cholesterol against Serum Cotinine&quot;, x = &quot;Serum Cotinine (ng/ml)&quot;, y = &quot;Total Cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-1.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = alcohol_use_cat, y = total_cholesterol)) + geom_point() +
-  labs(title = &quot;Total_cholesterol against Alcohol Use&quot;, x = &quot;Alcohol use&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Total_cholesterol against Alcohol Use&quot;, x = &quot;Alcohol Use&quot;, y = &quot;Total Cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-2.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = physical_activity, y = total_cholesterol)) + geom_point() +
-  labs(title = &quot;Total_cholesterol against Physical_activity&quot;, x = &quot;Physical activity&quot;, y = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Total_cholesterol against Physical_activity&quot;, x = &quot;Physical Activity&quot;, y = &quot;Total Cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-3.png" width="90%" /></p>
 <pre class="r"><code>model_df |&gt; 
   ggplot(aes(x = total_cholesterol)) + geom_density() +
-  labs(title = &quot;Destribution of Total_cholesterol&quot;, x = &quot;Total cholesterol (mg/dL)&quot;)</code></pre>
+  labs(title = &quot;Destribution of Total_cholesterol&quot;, x = &quot;Total Cholesterol (mg/dL)&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-6-4.png" width="90%" /></p>
 <ul>
 <li>Based on the scatterplot, we can find slightly negative linear
@@ -1084,7 +1084,7 @@ fit_1 |&gt;
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line() +
-  labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
+  labs(title = &quot;QQ Plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-7-1.png" width="90%" /></p>
 <ul>
 <li>We can see that cotinine is <strong>significantly
@@ -1303,7 +1303,7 @@ fit_2 |&gt;
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line() +
-  labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
+  labs(title = &quot;QQ Plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-9-1.png" width="90%" /></p>
 <ul>
 <li>We can see that physical_activity is <strong>not significantly
@@ -1532,7 +1532,7 @@ fit_3 |&gt;
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line() +
-  labs(title = &quot;QQ plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
+  labs(title = &quot;QQ Plot&quot;, x = &quot;Quantile&quot;, y = &quot;Residual&quot;)</code></pre>
 <p><img src="model_files/figure-html/unnamed-chunk-11-1.png" width="90%" /></p>
 <ul>
 <li>We can see that alcohol_use_cat is <strong>significantly positively
@@ -1937,7 +1937,6 @@ summary(test_aic)</code></pre>
 ##   (2752 observations deleted due to missingness)
 ## Multiple R-squared:  0.04106,    Adjusted R-squared:  0.0384 
 ## F-statistic:  15.4 on 15 and 5393 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code># AIC result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code></pre>
 <ul>
 <li>Based on the output, we can find the best model optimized by
 comparing AIC value is
@@ -2011,7 +2010,6 @@ which is the same as model <code>fit_alc</code>.</li>
 ## - marital_status      2    1.8116 260.06 -16388
 ## - alcohol_use_cat     2    2.5279 260.78 -16373
 ## - gender              1    3.9513 262.20 -16342</code></pre>
-<pre class="r"><code># backward result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code></pre>
 <ul>
 <li>Based on the output, we can find the best model optimized by
 backward selection summary for full model with log transfermation on y
@@ -2086,7 +2084,6 @@ which is the same as model <code>fit_alc</code>.</li>
 ## - marital_status      2    1.8116 260.06 -16388
 ## - alcohol_use_cat     2    2.5279 260.78 -16373
 ## - gender              1    3.9513 262.20 -16342</code></pre>
-<pre class="r"><code># stepwise result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level</code></pre>
 <ul>
 <li>Based on the output, we can find the best model optimized by
 stepwise selection summary for full model with log transfermation on y
@@ -2350,7 +2347,7 @@ race, marital status, education level, and poverty level, based on this
 sample. This association is significant at 0.05 level of
 significance.</li>
 </ul>
-<p>Then, We save this model as a RDS file for the next R shiny part:
+<p>Then, We save this model as a RDS file for the next part:
 <strong>Predict Your Risk</strong>.</p>
 <pre class="r"><code>save_path = &quot;fit_alc.rds&quot;
 saveRDS(fit_alc, save_path)</code></pre>

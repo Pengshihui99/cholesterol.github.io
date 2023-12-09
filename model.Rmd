@@ -292,19 +292,19 @@ In this study, our response variable is total cholesterol level (`total_choleste
 ```{r, message=FALSE, warning=FALSE}
 model_df |> 
   ggplot(aes(x = cotinine, y = total_cholesterol)) + geom_point() +
-  labs(title = "Total_cholesterol against Serum Cotinine", x = "Serum cotinine (ng/ml)", y = "Total cholesterol (mg/dL)")
+  labs(title = "Total_cholesterol against Serum Cotinine", x = "Serum Cotinine (ng/ml)", y = "Total Cholesterol (mg/dL)")
 
 model_df |> 
   ggplot(aes(x = alcohol_use_cat, y = total_cholesterol)) + geom_point() +
-  labs(title = "Total_cholesterol against Alcohol Use", x = "Alcohol use", y = "Total cholesterol (mg/dL)")
+  labs(title = "Total_cholesterol against Alcohol Use", x = "Alcohol Use", y = "Total Cholesterol (mg/dL)")
 
 model_df |> 
   ggplot(aes(x = physical_activity, y = total_cholesterol)) + geom_point() +
-  labs(title = "Total_cholesterol against Physical_activity", x = "Physical activity", y = "Total cholesterol (mg/dL)")
+  labs(title = "Total_cholesterol against Physical_activity", x = "Physical Activity", y = "Total Cholesterol (mg/dL)")
 
 model_df |> 
   ggplot(aes(x = total_cholesterol)) + geom_density() +
-  labs(title = "Destribution of Total_cholesterol", x = "Total cholesterol (mg/dL)")
+  labs(title = "Destribution of Total_cholesterol", x = "Total Cholesterol (mg/dL)")
 ```
 
 * Based on the scatterplot, we can find slightly negative linear trends, but there is heteroscedasticity problem. Also, based on the density plot, we can find that the distribution of response variable (y) `total_cholesterol` is asymmetry. Therefore, we decide to use linear regression model with log-transformation on y for the following models.
@@ -335,7 +335,7 @@ model_df |>
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line() +
-  labs(title = "QQ plot", x = "Quantile", y = "Residual")
+  labs(title = "QQ Plot", x = "Quantile", y = "Residual")
 ```
 
 * We can see that cotinine is **significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
@@ -377,7 +377,7 @@ model_df |>
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line() +
-  labs(title = "QQ plot", x = "Quantile", y = "Residual")
+  labs(title = "QQ Plot", x = "Quantile", y = "Residual")
 ```
 
 * We can see that physical_activity is **not significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
@@ -419,7 +419,7 @@ model_df |>
   ggplot(aes(sample = resid)) +
   stat_qq() +
   stat_qq_line() +
-  labs(title = "QQ plot", x = "Quantile", y = "Residual")
+  labs(title = "QQ Plot", x = "Quantile", y = "Residual")
 ```
 
 * We can see that alcohol_use_cat is **significantly positively associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
@@ -463,8 +463,6 @@ fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_us
 test_aic = stepAIC(fit_full, direction = "both", trace = FALSE)
 
 summary(test_aic)
-
-# AIC result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level
 ```
 
 * Based on the output, we can find the best model optimized by comparing AIC value is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable **age** into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
@@ -474,7 +472,6 @@ summary(test_aic)
 
 ```{r}
 fit_backward = step(fit_full, direction = "backward")
-# backward result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level
 ```
 
 * Based on the output, we can find the best model optimized by backward selection summary for full model with log transfermation on y is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable **age** into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
@@ -483,7 +480,6 @@ fit_backward = step(fit_full, direction = "backward")
 
 ```{r}
 fit_stepwise = step(fit_full)
-# stepwise result: log(total_cholesterol) ~ alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level
 ```
 
 * Based on the output, we can find the best model optimized by stepwise selection summary for full model with log transfermation on y is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable **age** into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
@@ -572,7 +568,7 @@ fit_alc |>
 
 
 
-Then, We save this model as a RDS file for the next R shiny part: **Predict Your Risk**.
+Then, We save this model as a RDS file for the next part: **Predict Your Risk**.
 
 ```{r}
 save_path = "fit_alc.rds"
