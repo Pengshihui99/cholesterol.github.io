@@ -1340,7 +1340,7 @@ saveRDS(fit_alc, save_path)
 
 # **R Shiny App for Risk Prediction**
 
-We built a Shiny app to let use input their information including age, gender, race, education level, average annual family income, and use them into the selected fitted model as predictors' values. Then the app outputs a predicted result of total cholesterol level and then based on this value to output if it's above the normal level or at the normal level by comparing the total cholesterol value with 200 mg/dL.
+We built a Shiny app to let users input their information including age, gender, race, education level, average annual family income, and use them into the selected fitted model as predictors' values. Then the app outputs a predicted result of total cholesterol level and then based on this value to output if it's above the normal level or at the normal level by comparing the total cholesterol value with 200 mg/dL.
 
 Below is a screenshot to illustrate it.
 
