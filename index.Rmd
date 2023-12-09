@@ -30,16 +30,11 @@ After utilizing **NHANCES** dataset ([sources, part 2](source.html)), we made a 
 
 Just enter some simple information to get your current cholesterol levels.
 
-Click **"Predict Your Risk"** to take the test!
+Click ["Predict Your Risk"](https://ruiqixue.shinyapps.io/shiny/) to take the test!
 
 ### **Report**
 
 Explore our [Report](report.html) to discover the pivotal insights derived from our analysis!
-
-### **Project Overview**
-Click on the video below to explore the capabilities of this site and enjoy a summary of our key highlights.
-
-[video]
 
 ### **Lovely Creators**
 
