@@ -26,9 +26,9 @@ combine_tc_binary = read_csv("data/combine.csv") |>
   )
 ```
 
-## Ditribution of Total Cholesterol
+## **Ditribution of Total Cholesterol**
 
-The maximum is `r max ( combine_df $ total_cholesterol)`, the 75% quantile is `r quantile(combine_df $ total_cholesterol,0.75)`, the median is `r median(combine_df $ total_cholesterol)` ,  the low 25% quantile is `r quantile(combine_df $ total_cholesterol,0.25)` , the minimum is `r min ( combine_df $ total_cholesterol)`. And the distribution is shown as below. 
+
 ```{r, message = FALSE}
 TC_distri = ggplot(combine_df, aes(x = total_cholesterol)) +
   geom_histogram(fill = "skyblue", color = "black", alpha = 0.7) +
@@ -42,11 +42,11 @@ TC_distri = ggplot(combine_df, aes(x = total_cholesterol)) +
 ggplotly(TC_distri)
 ```
 
-The presented data illustrates the distribution of `Total Cholesterol`, revealing a notable *right-skewed graph*. This skewness is indicative of a pronounced prevalence of participants whose cholesterol levels are concentrated within the range of 130 to 200 mg/dL. 
+The presented data illustrates the distribution of `Total Cholesterol`, spans from a minimum of `r min ( combine_df $ total_cholesterol)` mg/dL to a maximum of `r max ( combine_df $ total_cholesterol)` mg/dL. The interquartile range, which captures the central `r quantile(combine_df $ total_cholesterol,0.50)` of the data, extends from `r quantile(combine_df $ total_cholesterol,0.25)` mg/dL (25th percentile) to `r quantile(combine_df $ total_cholesterol,0.75)` mg/dL (75th percentile), with the median falling at `r median(combine_df $ total_cholesterol)` mg/dL. It reveals a notable *right-skewed graph*. This skewness is indicative of a pronounced prevalence of participants whose cholesterol levels are concentrated within the range of 130 to 200 mg/dL. 
 
-According to CDC https://www.cdc.gov/cholesterol/index.htm. High cholesterol is defined as total cholesterol level greater than 200ng/ml. We use 200 ng/ml as cutoff point in the following analysis. Total cholesterol smaller than 200 ng/ml is defined as "desirable" ,  otherwise it is defined as " above desirable". 
+According to [CDC] (https://www.cdc.gov/cholesterol/index.htm), high cholesterol is defined as total cholesterol level greater than 200mg/dL. Therefore, we use this value to categorize into a binary variable, `Total Cholesterol Cat` with 2 levels: "desirable" (at most 200mg/dL) and "above desirable" (higher than 200mg/dL) in the following analysis. 
 
-## Relationship between Sleep Hours & Total Cholesterol
+## **Sleep Hours & Total Cholesterol**
 
 ```{r, message = FALSE, warning = FALSE}
 sleep_hour_distri = ggplot(combine_df, aes(x = sleep_hour)) +
@@ -59,7 +59,7 @@ sleep_hour_distri = ggplot(combine_df, aes(x = sleep_hour)) +
 ggplotly(sleep_hour_distri)
 ```
 
-The distribution of `Sleep Hours` depicted above exhibits characteristics consistent with a *normal distribution*, showcasing a bell-shaped curve. This normal distribution suggests that the majority of individuals in the sample population tend to obtain approximately 7 to 8 hours of sleep per night. The peak of the curve is centered around this range, indicating a prevalent and typical sleep duration among the surveyed participants. 
+The distribution of `Sleep Hours` depicted above exhibits characteristics consistent with a **normal distribution**, showcasing a bell-shaped curve. This normal distribution suggests that the majority of individuals in the sample population tend to obtain approximately 7 to 8 hours of sleep per night in weekdays. The peak of the curve is centered around this range, indicating a prevalent and typical sleep duration among the surveyed participants. 
 
 
 
@@ -73,12 +73,12 @@ TC_sleep =
 TC_sleep
 ```
 
-The presented *boxplot* visually represents the distribution of `Sleep Hours` in conjunction with `Total Cholesterol` levels*, revealing a remarkable similarity in distribution patterns between the group categorized as "desirable" and those classified as "above desirable". This observation suggests that individuals within both categories exhibit comparable trends in sleep duration.
+The presented **boxplot** visually represents the distribution of `Sleep Hours` in conjunction with `Total Cholesterol Cat`, revealing a remarkable similarity in distribution patterns between the group categorized as "desirable" and those classified as "above desirable". This observation suggests that individuals within both categories exhibit comparable trends in sleep duration.
 
 
 
 
-## Relationship Between Physical Activity & Total Cholesterol
+## **Physical Activity & Total Cholesterol**
 
 ```{r, message = FALSE, warning = FALSE}
 combine_tc_binary = 
@@ -99,10 +99,10 @@ TC_activity = ggplot(combine_tc_binary, aes(x = physical_activity, fill = total_
 ggplotly(TC_activity)
 ```
 
-The above bar chart illustrates the association between `Physical Activity` and `Total Cholesterol`. It reveals that the majority of individuals engage in vigorous physical activity. Surprisingly, the prevalence of individuals with Total Cholesterol levels above the desirable range remains consistent across three distinct levels of Physical Activity. 
+The above **bar chart** illustrates the association between `Physical Activity` and `Total Cholesterol Cat`. It reveals that the majority of individuals engage in vigorous physical activity. Surprisingly, the prevalence of individuals with Total Cholesterol groups above the desirable range remains consistent across three distinct levels of Physical Activity. 
 
 
-## Relationship Between  Alchohol Use & Total Cholesterol 
+## **Alchohol Use & Total Cholesterol **
 
 ```{r message = FALSE, warning = FALSE }
 combine_tc_binary = 
@@ -115,7 +115,7 @@ Al_distri = ggplot(combine_tc_binary, aes(x =  alcohol_use_cat)) +
   geom_bar(fill = "skyblue", color = "black", alpha = 0.7) +
   labs(
     x = "Drinking Habits",
-    y = "Frequency",
+    y = "Count",
     title = "Distribution of Drinking Habits"
   ) +
   theme_minimal()
@@ -123,7 +123,7 @@ Al_distri = ggplot(combine_tc_binary, aes(x =  alcohol_use_cat)) +
 ggplotly(Al_distri)
 ```
 
-The distribution of drinking habits is a right skewed one, with most people are categorised in "light drinker", some people in "moderate drinker", and least people,but still almost 1000, in heavy drinker. 
+The people who drink less than 11 times last year are defined as " light drinker", the people who drink once a month to twice a week are defined as " moderate drinkers", the people who drink more than twice a week are defined as " heavy drinkers". The distribution of drinking habits is a right skewed one, with more than 3000 people are  "light drinker", around 2500 people are "moderate drinker", and around 1000 people are heavy drinker. 
 
 
 ```{r message = FALSE, warning = FALSE}
@@ -134,17 +134,17 @@ combine_tc_binary %>%
           ) %>% 
   plot_ly (x=~alcohol_use_cat, y= ~ Proportion * 100, type = "bar", color = ~total_cholesterol) %>% 
   layout(barmode = "stack",
-         title = "Distribution of High Total Cholersterol by Drinking habits",
+         title = "Distribution of High Total Cholersterol by Drinking Habits",
          xaxis = list(title = "Drinking Habits"),
          yaxis = list(title = "Percentage (%)")
          )
 ```
-According to the graph, the percentage of high cholesterol increase as people drink more. 30% percent of the light drinkers have high cholesterol while 40 % of heavy drinker have high cholesterol level. 
+According to the graph, the percentage of high cholesterol increase as people drink more. 30% of light drinkers have high cholesterol while 40% of heavy drinkers have high cholesterol level. 
 
 
-### Relationship between Serum Cotinine and Total Cholesterol 
+## **Serum Cotinine & Total Cholesterol **
 
-According to CDC(https://www.cdc.gov/biomonitoring/Cotinine_BiomonitoringSummary.html) the  cutoff point of cotinine for smoker and nonsmoker is 10ng/ml. The serum cotinie level in smoker and non-smoker distribute like this :
+According to [CDC](https://www.cdc.gov/biomonitoring/Cotinine_BiomonitoringSummary.html), the  cutoff of cotinine for smoker and nonsmoker is 10ng/ml. The serum cotinie level in smoker distribute like this :
 
 ```{r message = FALSE, warning = FALSE}
 
@@ -154,28 +154,32 @@ combine_tc_binary =
          smoking_status_bi = factor(smoking_status_bi, levels = c("Nonsmoker","Smoker")))
   
 combine_tc_binary_Smoker =
-  combine_tc_binary %>% 
-   filter (smoking_status_bi == "Smoker") %>% 
+    combine_tc_binary %>% 
+    filter (smoking_status_bi == "Smoker") %>% 
     ggplot (aes(x= cotinine)) +
     geom_density() +
-    labs (title = "Serum Cotinine Value in Smoker" )
+    labs (title = "Serum Cotinine Value in Smoker",
+          x="Cotinine")
+
 
 ```
 
-The cotinine level is a left-skew line in smokers. 
+
 
 ```{r message = FALSE, warning = FALSE}
 combine_tc_binary_Nonsmoker =
-  combine_tc_binary %>% 
-   filter (smoking_status_bi == "Nonsmoker") %>% 
+    combine_tc_binary %>% 
+    filter (smoking_status_bi == "Nonsmoker") %>% 
     ggplot (aes(x= cotinine)) +
     geom_density() +
-    labs (title = "Serum Cotinine Value in Nonsmoker" )
+    labs (title = "Serum Cotinine Value in Nonsmoker",
+          x=" Cotinine")
 
 grid.arrange(combine_tc_binary_Smoker, combine_tc_binary_Nonsmoker, ncol = 2)
 ```
 
-The cotinine level is centered around 0.00 ng/ml in non-smokers. 
+The cotinine level is a left-skew line in smokers, and it is centered around 0.00 ng/ml in non-smokers. 
+ 
 
 ```{r message = FALSE, warning = FALSE }
 combine_tc_binary  %>% 
@@ -192,4 +196,3 @@ combine_tc_binary  %>%
 ```
 
 According to the graph, the proportions of total cholesterol level  in smoker and non-smoker are almost the same. 
-
