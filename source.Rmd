@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
 
-## Data Sources
+## **Data Sources**
 The datasets employed in our project originate from two distinct primary sources. 
 
 For part 1, we utilized [PLACES: Local Data for Better Health](https://data.cdc.gov/500-Cities-Places/PLACES-Local-Data-for-Better-Health-County-Data-20/swc5-untb/about_data) to acquire model-based county estimates of the entire United States during the time period from 2020 to 2021. The data were provided by the CDC, Division of Population Health, Epidemiology and Surveillance Branch.It has 229K rows and 21 columns initially. The estimates encompass 36 measures, spanning health outcomes, preventive services use, chronic disease-related health risk behaviors, disabilities, and health status. We are using several health-affecting behavior variables and the prevalence of High Cholesterol to evaluate and sorting out the most correlated risk factors to the outcome at the national level.
