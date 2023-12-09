@@ -1879,7 +1879,7 @@ Guidelines</td>
 </table>
 </div>
 <div id="aic-value-selection" class="section level3">
-<h3>5.AIC value selection</h3>
+<h3>5. AIC value selection</h3>
 <pre class="r"><code>fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
 
 test_aic = stepAIC(fit_full, direction = &quot;both&quot;, trace = FALSE)

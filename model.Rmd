@@ -455,7 +455,7 @@ fit_full |>
 ```
 
 
-### 5.AIC value selection
+### 5. AIC value selection
 
 ```{r}
 fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
