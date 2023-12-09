@@ -572,7 +572,7 @@ fit_alc |>
 
 
 
-Then, We save this model as a RDS file for the next R shiny part: **Predict your risk**.
+Then, We save this model as a RDS file for the next R shiny part: **Predict Your Risk**.
 
 ```{r}
 save_path = "fit_alc.rds"
