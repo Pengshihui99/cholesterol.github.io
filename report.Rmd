@@ -331,9 +331,12 @@ Above is the final dataset `combine_df`, with 8161 observations and 14 variables
 
 # **Exploratory Analysis** 
 
-## *Part 1: National Level Prevalence Analysis*
+## *Part 1: National-level Prevalence Analysis*
 
-### Visulization
+### Prevalence Visulization
+
+* We first visualize the prevalence of HC and health behaviors.
+
 
 #### The U.S. High Cholesterol Map 
 This is to have an overview of the prevalence of high cholesterol among the nation.
@@ -373,7 +376,9 @@ state_map
 * Based on the map, we can find that the prevalences of high cholesterol varied among the nation, but were generally higher in the south than in the north of the USA.
 
 #### Health Behaviors Prevalence Boxplot
+
 Draw a boxplot to visualize the prevalence of each health behavior that is related to and has potential association with high cholesterol.
+
 ```{r, message=FALSE, warning=FALSE}
 chol_pivot = merged_total |>
   select(state_abbr, chol_pre_2020, chol_pre_2021) |>
@@ -429,7 +434,9 @@ box_plot
 * We try to find the top factors that affect high cholesterol most in terms of correlation
 
 #### Association Trend Plot 
-This is to observe trendings of associations between prevalence of high cholesterol and prevalence of related health-affecting behaviors.
+
+This is to observe trends of associations between prevalence of high cholesterol and prevalence of related health-affecting behaviors.
+
 ```{r warning=FALSE, warning=FALSE}
 
 x_range = range(c(pull(merged_total, chol_pre_2021), pull(merged_total, chol_pre_2020)))
@@ -459,7 +466,9 @@ prevalence_plot
 * Based on the trend, when the prevalence of high cholesterol increased, we can find the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening also increased. The trend of the prevalence of binge drinking is not obvious. Therefore, we move to check sub-association trending plot.
 
 #### Sub-Association Trending Plot
+
 To have a clearer view of each behavior, let's "zoom in" and observe the trending in more detail.
+
 ```{r, message=FALSE, warning=FALSE}
 fig1 = merged_total |>
   plot_ly() |>
@@ -500,6 +509,7 @@ pre_sub_figs
 
 
 #### Calculate the correlation between each behavior and high cholesterol
+
 ```{r, message=FALSE, warning=FALSE}
 
 cor_table = data.frame(behavior = character(), correlation = numeric(), stringsAsFactors = FALSE)
@@ -535,8 +545,11 @@ knitr::kable(cor_table)
 
 ```
 
+
 #### Correlation Bar Chart
+
 Use a bar chart to visualize it.
+
 ```{r, message=FALSE, warning=FALSE}
 
 cor_bar = plot_ly(cor_table, x = ~Behavior, y = ~Correlation, type = 'bar', text = ~Correlation, texttemplate = '%{y:.2f}', textposition = 'outside', opacity = 0.8, marker = list(color = "MidnightBlue")) |>
@@ -1299,6 +1312,7 @@ saveRDS(fit_alc, save_path)
 We built a Shiny app to let use input their information including age, gender, race, education level, average annual family income, and use them into the selected fitted model as predictors' values. Then the app outputs a predicted result of total cholesterol level and then based on this value to output if it's above the normal level or at the normal level by comparing the total cholesterol value with 200 mg/dL.
 
 Below is a screenshot to illustrate it.
+
 ![](images/shiny_screenshot.jpg){width=60%}
 
 # **Discussion**
