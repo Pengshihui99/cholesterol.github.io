@@ -438,8 +438,12 @@ box_plot
 
 * Based on the boxplot, we can find that prevalence of high cholesterol was similar between 2020 and 2021. Lacking sleep was the most appreciable health-adverse behavior, followed by lacking physical activities. Binge drinking and smoking problem also existed, while they were not significant compared to other health-adverse behavior. The prevalence of cholesterol screening is high, while the prevalence of lacking health insurance is low. These indicate health-promote behavior.
 
+<br>
+
 ### Find Top Behaviors
 * We try to find the top factors that affect high cholesterol most in terms of correlation
+
+<br>
 
 #### Association Trend Plot 
 
@@ -472,6 +476,8 @@ prevalence_plot
 ```
 
 * Based on the trend, when the prevalence of high cholesterol increased, we can find the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening also increased. The trend of the prevalence of binge drinking is not obvious. Therefore, we move to check sub-association trending plot.
+
+<br>
 
 #### Sub-Association Trending Plot
 
@@ -514,7 +520,7 @@ pre_sub_figs
 
 * Based on these trending plots, we can find the prevalence of high cholesterol was (1) positively associated with the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening; and (2) negatively associated with the prevalence of binge drinking.
 
-
+<br>
 
 #### Calculate the correlation between each behavior and high cholesterol
 
@@ -553,6 +559,7 @@ knitr::kable(cor_table)
 
 ```
 
+<br>
 
 #### Correlation Bar Chart
 
@@ -573,6 +580,9 @@ cor_bar
 * Based on the table results and bar chart, we can find that the health-adverse behavior lacking physical activities, lacking sleep, binge drinking, and smoking had top four high correlations with high cholesterol. Binge drinking had a negative correlation with high cholesterol, which is against the common sense. 
 
 * Therefore, we decide to examine the associations between these four health-adverse behaviors and total cholesterol, and then to provide a statistical model to predict high total cholesterol risk for users.
+
+<br>
+<br>
 
 ## *Part 2: Individual-level Modeling*
 ```{r, echo=FALSE,message=FALSE, warning=FALSE}
@@ -743,6 +753,8 @@ According to the graph, the proportions of total cholesterol level  in smoker an
 
 To test the strength of the association, we would like to use regression model to do further analysis. 
 
+<br>
+
 # **Model Building**
 
 Load packages and import datasets.
@@ -791,6 +803,7 @@ ab_desire_df =
   filter(chol_cat == 1)
 ```
 
+<br>
 
 ## *Variables features*
 
@@ -887,6 +900,8 @@ conti_des_df
 ```
 
 * Based on the result, we can find that the age and cotinine is significantly different between case and control.
+
+<br>
 
 ### Binary and categorical variables
 
@@ -1005,7 +1020,7 @@ cat_count_case = lapply(cat_vars_case, count_case_function) |>
   bind_rows() |> 
   as.data.frame()
 ```
-
+<br>
 #### Description table
 
 ```{r, message=FALSE}
@@ -1021,9 +1036,13 @@ cat_des_df
 
 * Based on the result, we can find that all the binary and categorical variables are significantly different between case and control.
 
+<br>
+
 ## *Building model*
 
 In this study, our response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1) cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`). Sleep_hour is not significantly different between total cholesterol of desirable level and of above desirable level, so we remove this variable for the next model building steps. We decide to analyze the association step by step (significance level = 0.05).
+
+<br>
 
 ### Check the dataset
 
@@ -1047,13 +1066,14 @@ model_df |>
 
 * Based on the scatterplot, we can find slightly negative linear trends, but there is heteroscedasticity problem. Also, based on the density plot, we can find that the distribution of response variable (y) `total_cholesterol` is asymmetry. Therefore, we decide to use linear regression model with log-transformation on y for the following models.
 
+<br>
 
 ### Model selection
 
 Here, we use seven ways to build up different models. For the first four models, we build them based on epidemiological views. For the sixth, seventh, and eighth models, we build them based on biostatistical knowledge (AIC value, backward selection, and stepwise selection) combined with epidemiological views.
 
 
-#### 1. main explanatory variable: cotinine
+#### 1. Main explanatory variable: cotinine
 
 We hypothesize that cotinine, an indicator of exposure of smoking, is positively associated with the log of total cholesterol.
 
@@ -1095,7 +1115,7 @@ fit_cot |>
 * Based on the estimates of alcohol_use_cat, we can see no association between cotinine and log total cholesterol. This is not consistent with our hypothesis, and the estimate is not significant at 0.05 level of significance.
 
 
-#### 2. main explanatory variable: physical_activity
+#### 2. Main explanatory variable: physical_activity
 
 We hypothesize that physical activity is negatively associated with the log of total cholesterol.
 
@@ -1137,7 +1157,7 @@ fit_phy |>
 * Based on the estimates of alcohol_use_cat, we can see that compared to population with light activity (reference group), population with moderate activity and vigorous activity both have higher total cholesterol. This is not consistent with our hypothesis, and the association is not significant at 0.05 level of significance.
 
 
-#### 3. main explanatory variable: alcohol_use_cat
+#### 3. Main explanatory variable: alcohol_use_cat
 
 We hypothesize that alcohol drinking is positively associated with the log of total cholesterol.
 
@@ -1178,7 +1198,7 @@ fit_alc |>
 
 * Based on the estimates of alcohol_use_cat, we can see that compared to heavy drinkers (reference group), light drinkers and moderate drinkers both have significant lower total cholesterol. Light drinkers have lower risk than moderate drinkers. This is consistent with our hypothesis
 
-#### 4. explanatory variables: cotinine, physical_activity, and alcohol_use_cat
+#### 4. Explanatory variables: cotinine, physical_activity, and alcohol_use_cat
 
 We assume that smoking (implied by cotinine), alcohol drinking, and physical activity could be potentially related to each other. Therefrore, a full model including these three variables to adjust their influence to each other makes sense.
 
@@ -1222,6 +1242,7 @@ fit_stepwise = step(fit_full)
 
 * Based on the output, we can find the best model optimized by stepwise selection summary for full model with log transfermation on y is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable **age** into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
 
+<br>
 
 ### Model comparison
 
@@ -1290,6 +1311,7 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |>
 
 * Based on the violin plot, these four models have similar r square values.
 
+<br>
 
 ## *Conclusion*
 
@@ -1313,7 +1335,8 @@ saveRDS(fit_alc, save_path)
 ```
 
 
-
+<br>
+<br>
 
 # **R Shiny App for Risk Prediction**
 
@@ -1322,6 +1345,9 @@ We built a Shiny app to let use input their information including age, gender, r
 Below is a screenshot to illustrate it.
 
 ![](images/shiny_screenshot.jpg){width=60%}
+
+<br>
+<br>
 
 # **Discussion**
 The findings from our project highlight several significant observations:
