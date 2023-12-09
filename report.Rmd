@@ -331,10 +331,9 @@ combine_df %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
-<dr>
 
 Above is the final dataset `combine_df`, with 8161 observations and 14 variables will be used in following steps of exploratory and statistical analysis. 
-
+----------------
 
 # **Exploratory Analysis** 
 
