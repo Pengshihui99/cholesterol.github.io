@@ -3,12 +3,12 @@ output_dir: "."
 navbar:
   title: "Home"
   right:
+    - text: "Data Sources"
+      href: source.html
     - text: "Prevalence Analysis"
       href: eda.html
-    - text: "Analysis"
+    - text: "Model Analysis"
       menu:
-        - text: "Data Sources"
-          href: source.html
         - text: "Exploratory Analysis"
           href: Exploratory-Analysis.html
         - text: "Build Model"
