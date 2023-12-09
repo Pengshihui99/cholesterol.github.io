@@ -52,4 +52,4 @@ The link to the repository of this project can be found [here](https://github.co
 
 Click on the video below to explore the capabilities of this site and enjoy a summary of our key highlights.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/9zWMoksQLVI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/wWU8n4jqFxM?si=9YVNW8XpmNF9FGJ3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
