@@ -40,6 +40,7 @@ The purposes of this project is to answer the following questions:
 
 We acquire county level health prevalence data of the entire United States during the time period from 2020 to 2021. The data were provided by the CDC, Division of Population Health, Epidemiology and Surveillance Branch.It has 229K rows and 21 columns initially. The estimates encompass 36 measures, spanning health outcomes, preventive services use, chronic disease-related health risk behaviors, disabilities, and health status. We are using several health-affecting behavior variables and the prevalence of High Cholesterol to evaluate and sorting out the most correlated risk factors to the outcome at the national level.
 
+
 ```{r, message=FALSE, warning=FALSE}
 
 
@@ -162,6 +163,12 @@ merged_2021 = Reduce(function(df1, df2) left_join(df1, df2, by = c("state_abbr",
 merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
 merged_total = left_join(merged_2021, merged_2020)
 ```
+
+Firstly, we filter six health-related variables, including binge drinking, currently smoking, no leisure-time physical activity (physical activity), lacking health insurance, cholesterol screening, and sleep less than 7 hours (lacking sleep) and pivot longer for easier reading and better visualization. We calculate state level prevalence by organizing and calculation county level data. We join the map data frame and prevalence dataframe by state abbreviation. we link geographic prevalence data into the USA’s map to show the distribution of cholesterol prevalence across the nation. 
+
+It is worth nothing that when mapping, we exclude HI and AK for better visualization, as including them will lead to a skewing view of map. FL data is missing in the prevalence data. But we include them into all of our other data analysis process.
+
+Secondly, We first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
 
 
 ## *Part 2: [NHANCES](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020)*
@@ -321,9 +328,11 @@ Above is the final dataset `combine_df`, with 8161 observations and 14 variables
 
 # **Exploratory Analysis** 
 
-## Visulization
+## Part 1: National Level Prevalence Analysis
 
-### The U.S. High Cholesterol Map 
+### Visulization
+
+#### The U.S. High Cholesterol Map 
 This is to have an overview of the prevalence of high cholesterol among the nation.
 ```{r, message=FALSE, warning=FALSE}
 
@@ -360,7 +369,7 @@ state_map
 
 * Based on the map, we can find that the prevalences of high cholesterol varied among the nation, but were generally higher in the south than in the north of the USA.
 
-### Health Behaviors Prevalence Boxplot
+#### Health Behaviors Prevalence Boxplot
 Draw a boxplot to visualize the prevalence of each health behavior that is related to and has potential association with high cholesterol.
 ```{r, message=FALSE, warning=FALSE}
 chol_pivot = merged_total |>
@@ -413,10 +422,10 @@ box_plot
 
 * Based on the boxplot, we can find that prevalence of high cholesterol was similar between 2020 and 2021. Lacking sleep was the most appreciable health-adverse behavior, followed by lacking physical activities. Binge drinking and smoking problem also existed, while they were not significant compared to other health-adverse behavior. The prevalence of cholesterol screening is high, while the prevalence of lacking health insurance is low. These indicate health-promote behavior.
 
-## Find Top Behaviors
+### Find Top Behaviors
 * We try to find the top factors that affect high cholesterol most in terms of correlation
 
-### Association Trend Plot 
+#### Association Trend Plot 
 This is to observe trendings of associations between prevalence of high cholesterol and prevalence of related health-affecting behaviors.
 ```{r warning=FALSE, warning=FALSE}
 
@@ -446,7 +455,7 @@ prevalence_plot
 
 * Based on the trend, when the prevalence of high cholesterol increased, we can find the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening also increased. The trend of the prevalence of binge drinking is not obvious. Therefore, we move to check sub-association trending plot.
 
-### Sub-Association Trending Plot
+#### Sub-Association Trending Plot
 To have a clearer view of each behavior, let's "zoom in" and observe the trending in more detail.
 ```{r, message=FALSE, warning=FALSE}
 fig1 = merged_total |>
@@ -487,7 +496,7 @@ pre_sub_figs
 
 
 
-### Calculate the correlation between each behavior and high cholesterol
+#### Calculate the correlation between each behavior and high cholesterol
 ```{r, message=FALSE, warning=FALSE}
 
 cor_table = data.frame(behavior = character(), correlation = numeric(), stringsAsFactors = FALSE)
@@ -523,7 +532,7 @@ knitr::kable(cor_table)
 
 ```
 
-### Correlation Bar Chart
+#### Correlation Bar Chart
 Use a bar chart to visualize it.
 ```{r, message=FALSE, warning=FALSE}
 
@@ -541,7 +550,7 @@ cor_bar
 
 * Therefore, we decide to examine the associations between these four health-adverse behaviors and total cholesterol, and then to provide a statistical model to predict high total cholesterol risk for users.
 
-## *Individual-level Modeling*
+## *Part 2: Individual-level Modeling*
 ```{r, echo=FALSE,message=FALSE, warning=FALSE}
 library(ggridges)
 library(tidyverse)

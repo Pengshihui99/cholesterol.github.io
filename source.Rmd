@@ -45,7 +45,7 @@ Firstly, we filter six health-related variables, including binge drinking, curre
 
 It is worth nothing that when mapping, we exclude HI and AK for better visualization, as including them will lead to a skewing view of map. FL data is missing in the prevalence data. But we include them into all of our other data analysis process.
 
-Secondly, We first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
+Secondly, we first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
 ```{r, message=FALSE, warning=FALSE}
 
 
