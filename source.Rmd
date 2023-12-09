@@ -42,6 +42,7 @@ For part 2, the resource is from the program [The National Health and Nutrition 
 ## Data Import and Tidy
 ### Part 1: PLACES: Local Data for Better Health
 The dataset has 229K rows and 21 columns initially. We filter the health outcome `high cholesterol` and 6 related factors (health-affecting behaviors) `No leisure-time physical activity`,`Sleep less than 7 hours`,`Binge drinking `,``,``,``.
+
 ### Part 2: NHANES
 The steps of data wrangling was presenting below:
 
