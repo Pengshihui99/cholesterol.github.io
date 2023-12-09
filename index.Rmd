@@ -4,7 +4,7 @@ output:
   html_document:
     toc: true
     toc_float: true
-    theme: cosmo
+    theme: simplex
 ---
 
 ### **Adverse Effects of High Cholesterol**
@@ -42,8 +42,6 @@ Click on the video below to explore the capabilities of this site and enjoy a su
 [video]
 
 ### **Lovely Creators**
-
-(Names ranked by surname)
 
 * Shihui Peng (sp4170)
 * Jingyu Wang (jw4348)

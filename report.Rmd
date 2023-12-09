@@ -324,13 +324,14 @@ combine_df %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
+<dr>
 
 Above is the final dataset `combine_df`, with 8161 observations and 14 variables will be used in following steps of exploratory and statistical analysis. 
 
 
 # **Exploratory Analysis** 
 
-## Part 1: National Level Prevalence Analysis
+## *Part 1: National Level Prevalence Analysis*
 
 ### Visulization
 
@@ -1298,4 +1299,23 @@ saveRDS(fit_alc, save_path)
 We built a Shiny app to let use input their information including age, gender, race, education level, average annual family income, and use them into the selected fitted model as predictors' values. Then the app outputs a predicted result of total cholesterol level and then based on this value to output if it's above the normal level or at the normal level by comparing the total cholesterol value with 200 mg/dL.
 
 Below is a screenshot to illustrate it.
-![](shiny_screenshot.jpg){width=60%}
+![](images/shiny_screenshot.jpg){width=60%}
+
+# **Discussion**
+The findings from our project highlight several significant observations:
+
+- From the national dataset, we observed associations between high cholesterol and sleep duration, physical activity, alcohol consumption, and smoking. 
+- Subsequently, utilizing the NHANES dataset, we conducted a detailed analysis of the distribution and interrelationships of these factors: 
+  - Graphical representations revealed a higher prevalence of high cholesterol among heavy drinkers compared to moderate and mild drinkers. 
+  - Employing a multiple linear regression model, we established a correlation between alcohol intake and cholesterol levels. The optimal predictive model, adjusting for age, gender, race, marital status, education level, and poverty level, identified alcohol intake as the primary exposure. 
+- To facilitate user interaction, we developed a Shiny app enabling input of personal information (age, gender, race, education level, average annual family income), which will return cholesterol results categorized as normal or above-normal based on a threshold of 200 mg/dL.
+
+The goal of our project is to identify top health related behaviors correlated with high cholesterol using national datasets, and then evaluate these associations with individual data measurements. However, discrepancies arise in the modeling results compared to the correlation direction seen in prevalence analysis. For instance, a positive correlation between current smoking and high cholesterol (coefficient of 0.49) in national data contrasts with the lack of significant association in model analysis. Possible reasons can be different time spans of the datasets (national dataset: 2020-2021, individual dataset: 2017-2020 pre-pandemic). COVID-19 could also contribute to discrepancies in data analysis. The pandemic brought about significant changes in lifestyle, healthcare access, and stress levels, which could influence health outcomes like cholesterol levels. Furthermore, the pandemic's impact on smoking habits, diet, and physical activity might alter the association between these factors and cholesterol. Thus, COVID-19 could act as a confounder, affecting both the risk factors and the health outcome, creating plausible correlation between them. 
+
+Finding a correlation between sleep duration and cholesterol levels has proven challenging, as a significant portion of the population sleeps within the range of 6-10 hours. The distribution observed in the Exploratory Analysis is nearly identical among individuals with high cholesterol and those without, making it difficult to discern a clear association between sleep hours and cholesterol outcomes.
+
+On the other hand, high cholesterol indeed is a multifaceted health outcome influenced by a complex interplay of various factors. The limitations of the models used and the simplicity of single variable graphs might not fully capture these complexities. In real-world data analysis, especially in healthcare, the interdependencies and interactions between numerous variables often make it challenging to isolate the effects of individual factors. Therefore, a more nuanced approach, possibly involving more sophisticated statistical techniques or a broader range of variables, could be necessary to better understand and predict cholesterol levels.
+
+Heteroscedasticity exists for the relationship between high cholesterol and cotinine, which indicates using linear regression is not the best choice. Also, even though we observed a linear relationship between high cholesterol and each selected health-related variable, the linear relationship seems very slight. Therefore, we need to select a model which might fit with this data set better in the next step.
+
+We defined our categorical variables based on NHANES descriptions and our understanding. In the next step, we can use unsupervised learning methods, such as clustering, to help us determine the group clusters and categorize the numeric or categorical variables into the most proper group. We can also use the random forest model to figure out the most important features, instead of finding the variables from NHANES or deducting from the prevalence dataset by ourselves.
