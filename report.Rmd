@@ -333,6 +333,7 @@ combine_df %>%
 ```
 
 Above is the final dataset `combine_df`, with 8161 observations and 14 variables will be used in following steps of exploratory and statistical analysis. 
+
 ----------------
 
 # **Exploratory Analysis** 
