@@ -337,7 +337,7 @@ Above is the final dataset `combine_df`, with 8161 observations and 14 variables
 <br>
 <br>
 
-# **Exploratory Analysis** 
+# **EDA** 
 
 ## *Part 1: National-level Prevalence Analysis*
 
@@ -757,6 +757,7 @@ To test the strength of the association, we would like to use regression model t
 
 # **Model Building**
 
+
 Load packages and import datasets.
 ```{r, message=FALSE}
 # load packages and basic settings
@@ -803,13 +804,14 @@ ab_desire_df =
   filter(chol_cat == 1)
 ```
 
+
+# **Variables features**
+
 <br>
 
-## *Variables features*
+## *Continuous variables*
 
-### Continuous variables
-
-#### Methods
+### Methods
 
 For continuous variables, we use **mean** and **standard deviation** (std) to describe the distribution in overall samples, samples of desirable cholesterol level (defined as "control"), and samples of above-desirable cholesterol level (defined as "case"). Then, we use **t-test** to examine whether the means of these variables are significantly different between case group and control group (significance level = 0.05).
 ```{r, message=FALSE}
@@ -886,7 +888,7 @@ std_ab_desire = sapply(list_conti_ab_desire, sd) |>
   rename(case_std = "sapply(list_conti_ab_desire, sd)")
 ```
 
-#### Description table
+### Description table
 
 ```{r}
 # combind - continuous
@@ -903,9 +905,9 @@ conti_des_df
 
 <br>
 
-### Binary and categorical variables
+## *Binary and categorical variables*
 
-#### Methods
+### Methods
 
 For binary and categorical variables, we use **count** (n) and **percentage** (pct) to describe the distribution in overall samples, samples of desirable cholesterol level (defined as "control"), and samples of above-desirable cholesterol level (defined as "case"). Then, as the data meet the assumption, we use **chi-sq test** to examine whether the distribution of these variables are significantly different between case group and control group (significance level = 0.05).
 
@@ -1020,8 +1022,8 @@ cat_count_case = lapply(cat_vars_case, count_case_function) |>
   bind_rows() |> 
   as.data.frame()
 ```
-<br>
-#### Description table
+
+### Description table
 
 ```{r, message=FALSE}
 cat_des_df =
@@ -1038,13 +1040,11 @@ cat_des_df
 
 <br>
 
-## *Building model*
+# **Building model**
 
 In this study, our response variable is total cholesterol level (`total_cholesterol`), and our explanatory variables are (1) cotinine (`cotinine`), (2) physical activity (`physical_activity`), and (3) alcohol use (`alcohol_use_cat`). Sleep_hour is not significantly different between total cholesterol of desirable level and of above desirable level, so we remove this variable for the next model building steps. We decide to analyze the association step by step (significance level = 0.05).
 
-<br>
-
-### Check the dataset
+## *Check the dataset*
 
 ```{r, message=FALSE, warning=FALSE}
 model_df |> 
@@ -1068,16 +1068,15 @@ model_df |>
 
 <br>
 
-### Model selection
+## *Model selection*
 
 Here, we use seven ways to build up different models. For the first four models, we build them based on epidemiological views. For the sixth, seventh, and eighth models, we build them based on biostatistical knowledge (AIC value, backward selection, and stepwise selection) combined with epidemiological views.
 
-
-#### 1. Main explanatory variable: cotinine
+### 1. main explanatory variable: cotinine
 
 We hypothesize that cotinine, an indicator of exposure of smoking, is positively associated with the log of total cholesterol.
 
-##### 1) Univariable linear regression
+#### 1) Univariable linear regression
 
 `fit_1: log(total_cholesterol) = cotinine`
 
@@ -1099,8 +1098,7 @@ model_df |>
 * We can see that cotinine is **significantly associated** with total cholesterol level. We also check the qq-plot and find that the residuals followed a normal distribution, which indicates a suitability of using linear regression. 
 * Therefore, we move forward to build multivariable regression.
 
-
-##### 2) Multivariable linear regression
+#### 2) Multivariable linear regression
 
 `fit_cot: log(total_cholesterol) = cotinine + age + gender + race + marital_status + education_level_20 + poverty_level`
 
@@ -1112,14 +1110,17 @@ fit_cot |>
   knitr::kable(digits = 3)
 ```
 
+<br>
+
 * Based on the estimates of alcohol_use_cat, we can see no association between cotinine and log total cholesterol. This is not consistent with our hypothesis, and the estimate is not significant at 0.05 level of significance.
 
+<br>
 
-#### 2. Main explanatory variable: physical_activity
+### 2. main explanatory variable: physical_activity
 
 We hypothesize that physical activity is negatively associated with the log of total cholesterol.
 
-##### 1) Univariable linear regression
+#### 1) Univariable linear regression
 
 `fit_2: total_cholesterol = physical_activity`
 
@@ -1142,7 +1143,7 @@ model_df |>
 * Though no significant result found, we think maybe it is the confounders that conceal the association. Therefore, we move forward to build multivariable regression.
 
 
-##### 2) Multivariable linear regression
+#### 2) Multivariable linear regression
 
 `fit_phy: log(total_cholesterol) = physical_activity + age + gender + race + marital_status + education_level_20 + poverty_level`
 
@@ -1154,14 +1155,17 @@ fit_phy |>
   knitr::kable(digits = 3)
 ```
 
+<br>
+
 * Based on the estimates of alcohol_use_cat, we can see that compared to population with light activity (reference group), population with moderate activity and vigorous activity both have higher total cholesterol. This is not consistent with our hypothesis, and the association is not significant at 0.05 level of significance.
 
+<br>
 
-#### 3. Main explanatory variable: alcohol_use_cat
+### 3. main explanatory variable: alcohol_use_cat
 
 We hypothesize that alcohol drinking is positively associated with the log of total cholesterol.
 
-##### 1) Univariable linear regression
+#### 1) Univariable linear regression
 
 `fit_3: total_cholesterol = alcohol_use_cat`
 
@@ -1184,7 +1188,7 @@ model_df |>
 * Therefore, we move forward to build multivariable regression.
 
 
-##### 2) Multivariable linear regression
+#### 2) Multivariable linear regression
 
 `fit_alc: log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`
 
@@ -1196,9 +1200,13 @@ fit_alc |>
   knitr::kable(digits = 3)
 ```
 
+<br>
+
 * Based on the estimates of alcohol_use_cat, we can see that compared to heavy drinkers (reference group), light drinkers and moderate drinkers both have significant lower total cholesterol. Light drinkers have lower risk than moderate drinkers. This is consistent with our hypothesis
 
-#### 4. Explanatory variables: cotinine, physical_activity, and alcohol_use_cat
+<br>
+
+### 4. explanatory variables: cotinine, physical_activity, and alcohol_use_cat
 
 We assume that smoking (implied by cotinine), alcohol drinking, and physical activity could be potentially related to each other. Therefrore, a full model including these three variables to adjust their influence to each other makes sense.
 
@@ -1212,8 +1220,9 @@ fit_full |>
   knitr::kable(digits = 3)
 ```
 
+<br>
 
-#### 5. AIC value selection
+### 5. AIC value selection
 
 ```{r}
 fit_full = lm(log(total_cholesterol) ~ cotinine + physical_activity + alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level, data = model_df)
@@ -1225,8 +1234,9 @@ summary(test_aic)
 
 * Based on the output, we can find the best model optimized by comparing AIC value is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable **age** into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
 
+<br>
 
-#### 6. Backwawrd selection on full model
+### 6. Backwawrd selection on full model
 
 ```{r}
 fit_backward = step(fit_full, direction = "backward")
@@ -1234,7 +1244,9 @@ fit_backward = step(fit_full, direction = "backward")
 
 * Based on the output, we can find the best model optimized by backward selection summary for full model with log transfermation on y is `log(total_cholesterol) = alcohol_use_cat + gender + race + marital_status + education_level_20 + poverty_level`. However, we think variable age is an essential variable when studying health outcome, such as total cholesterol in this study. Therefore, we decide to add variable **age** into this model, and summary the final model for comparing is `log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level`, which is the same as model `fit_alc`.
 
-#### 7. Stepwise selection on full model
+<br>
+
+### 7. Stepwise selection on full model
 
 ```{r}
 fit_stepwise = step(fit_full)
@@ -1244,9 +1256,9 @@ fit_stepwise = step(fit_full)
 
 <br>
 
-### Model comparison
+## *Model comparison*
 
-#### 1. Cross validation
+### 1. Cross validation
 
 Based on the above steps, we now are comparing four models: fit_cot, fit_phy, fit_alc, and fit_full.
 
@@ -1296,8 +1308,9 @@ cv_results |>
 
 * Based on the violin plot, these four models have similar spread of root mean squared error.
 
+<br>
 
-#### 2. r square
+### 2. r square
 
 ```{r}
 rsquare_fit_cot = rsquare(fit_cot, data = model_df)
@@ -1313,7 +1326,7 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |>
 
 <br>
 
-## *Conclusion*
+# **Conclusion**
 
 We decide to use model `fit_alc: lm(log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level` as our final model. With similar rmse distribution and r square, model `fit_alc` is less complex than model `fit_full`, and AIC value, backward selection, and stepwise selection all indicate this model is the best.
 
@@ -1326,6 +1339,7 @@ fit_alc |>
 
 * Compared to heavy drinkers (reference group), light drinkers would have 0.066mg/dL less log(total_cholesterol) and moderate drinkers would have 0.046mg/dL less log(total_cholesterol), adjusting for age, gender, race, marital status, education level, and poverty level, based on this sample. This association is significant at 0.05 level of significance.
 
+<br>
 
 Then, We save this model as a RDS file for the next part: **Predict Your Risk**.
 

@@ -9,7 +9,7 @@ navbar:
       href: eda.html
     - text: "Model Analysis"
       menu:
-        - text: "Exploratory Analysis"
+        - text: "EDA"
           href: Exploratory-Analysis.html
         - text: "Build Model"
           href: model.html

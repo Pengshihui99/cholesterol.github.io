@@ -13,7 +13,7 @@
 
 <title>Model Building</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
@@ -341,7 +341,7 @@ div.tocify {
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="Exploratory-Analysis.html">Exploratory Analysis</a>
+      <a href="Exploratory-Analysis.html">EDA</a>
     </li>
     <li>
       <a href="model.html">Build Model</a>
@@ -455,6 +455,7 @@ ab_desire_df =
   filter(chol_cat == 1)</code></pre>
 <div id="variables-features" class="section level1">
 <h1><strong>Variables features</strong></h1>
+<p><br></p>
 <div id="continuous-variables" class="section level2">
 <h2><em>Continuous variables</em></h2>
 <div id="methods" class="section level3">
@@ -618,6 +619,7 @@ conti_des_df</code></pre>
 <li>Based on the result, we can find that the age and cotinine is
 significantly different between case and control.</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 <div id="binary-and-categorical-variables" class="section level2">
@@ -992,6 +994,7 @@ cat_des_df</code></pre>
 <li>Based on the result, we can find that all the binary and categorical
 variables are significantly different between case and control.</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 </div>
@@ -1032,6 +1035,7 @@ density plot, we can find that the distribution of response variable (y)
 linear regression model with log-transformation on y for the following
 models.</li>
 </ul>
+<p><br></p>
 </div>
 <div id="model-selection" class="section level2">
 <h2><em>Model selection</em></h2>
@@ -1236,12 +1240,14 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<p><br></p>
 <ul>
 <li>Based on the estimates of alcohol_use_cat, we can see no association
 between cotinine and log total cholesterol. This is not consistent with
 our hypothesis, and the estimate is not significant at 0.05 level of
 significance.</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 <div id="main-explanatory-variable-physical_activity"
@@ -1464,6 +1470,7 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<p><br></p>
 <ul>
 <li>Based on the estimates of alcohol_use_cat, we can see that compared
 to population with light activity (reference group), population with
@@ -1471,6 +1478,7 @@ moderate activity and vigorous activity both have higher total
 cholesterol. This is not consistent with our hypothesis, and the
 association is not significant at 0.05 level of significance.</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 <div id="main-explanatory-variable-alcohol_use_cat"
@@ -1691,6 +1699,7 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<p><br></p>
 <ul>
 <li>Based on the estimates of alcohol_use_cat, we can see that compared
 to heavy drinkers (reference group), light drinkers and moderate
@@ -1698,6 +1707,7 @@ drinkers both have significant lower total cholesterol. Light drinkers
 have lower risk than moderate drinkers. This is consistent with our
 hypothesis</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 <div
@@ -1877,6 +1887,7 @@ Guidelines</td>
 </tr>
 </tbody>
 </table>
+<p><br></p>
 </div>
 <div id="aic-value-selection" class="section level3">
 <h3>5. AIC value selection</h3>
@@ -1948,6 +1959,7 @@ the final model for comparing is
 <code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
+<p><br></p>
 </div>
 <div id="backwawrd-selection-on-full-model" class="section level3">
 <h3>6. Backwawrd selection on full model</h3>
@@ -1977,7 +1989,7 @@ which is the same as model <code>fit_alc</code>.</li>
 ## - cotinine            1    0.0067 258.20 -16421
 ## - age                 1    0.0485 258.24 -16420
 ## &lt;none&gt;                            258.19 -16419
-## - poverty_level       2    0.2075 258.40 -16419
+## - poverty_level       2    0.2075 258.40 -16418
 ## - education_level_20  4    0.6884 258.88 -16412
 ## - marital_status      2    1.2950 259.49 -16396
 ## - race                4    1.5302 259.72 -16395
@@ -2022,6 +2034,7 @@ the final model for comparing is
 <code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
+<p><br></p>
 </div>
 <div id="stepwise-selection-on-full-model" class="section level3">
 <h3>7. Stepwise selection on full model</h3>
@@ -2051,7 +2064,7 @@ which is the same as model <code>fit_alc</code>.</li>
 ## - cotinine            1    0.0067 258.20 -16421
 ## - age                 1    0.0485 258.24 -16420
 ## &lt;none&gt;                            258.19 -16419
-## - poverty_level       2    0.2075 258.40 -16419
+## - poverty_level       2    0.2075 258.40 -16418
 ## - education_level_20  4    0.6884 258.88 -16412
 ## - marital_status      2    1.2950 259.49 -16396
 ## - race                4    1.5302 259.72 -16395
@@ -2096,6 +2109,7 @@ the final model for comparing is
 <code>log(total_cholesterol) = alcohol_use_cat + age + gender + race + marital_status + education_level_20 + poverty_level</code>,
 which is the same as model <code>fit_alc</code>.</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 <div id="model-comparison" class="section level2">
@@ -2150,6 +2164,7 @@ cv_results |&gt;
 <li>Based on the violin plot, these four models have similar spread of
 root mean squared error.</li>
 </ul>
+<p><br></p>
 </div>
 <div id="r-square" class="section level3">
 <h3>2. r square</h3>
@@ -2182,6 +2197,7 @@ cbind(rsquare_fit_cot, rsquare_fit_phy, rsquare_fit_alc, rsquare_fit_full) |&gt;
 <li>Based on the violin plot, these four models have similar r square
 values.</li>
 </ul>
+<p><br></p>
 </div>
 </div>
 </div>
@@ -2347,6 +2363,7 @@ race, marital status, education level, and poverty level, based on this
 sample. This association is significant at 0.05 level of
 significance.</li>
 </ul>
+<p><br></p>
 <p>Then, We save this model as a RDS file for the next part:
 <strong>Predict Your Risk</strong>.</p>
 <pre class="r"><code>save_path = &quot;fit_alc.rds&quot;
