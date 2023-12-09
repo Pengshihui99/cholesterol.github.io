@@ -50,3 +50,5 @@ Click on the video below to explore the capabilities of this site and enjoy a su
 * Jiangyuan Zhu (jz3573)
 
 Click [here](About-Us.html) to learn more about us.
+
+The link to the repository of this project can be found [here](https://github.com/Pengshihui99/cholesterol.github.io).
