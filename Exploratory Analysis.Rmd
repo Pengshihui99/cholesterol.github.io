@@ -42,9 +42,9 @@ TC_distri = ggplot(combine_df, aes(x = total_cholesterol)) +
 ggplotly(TC_distri)
 ```
 
-The presented data illustrates the distribution of `Total Cholesterol`, spans from a minimum of `r min ( combine_df $ total_cholesterol)` mg/dL to a maximum of `r max ( combine_df $ total_cholesterol)` mg/dL. The interquartile range, which captures the central `r quantile(combine_df $ total_cholesterol,0.50)` of the data, extends from `r quantile(combine_df $ total_cholesterol,0.25)` mg/dL (25th percentile) to `r quantile(combine_df $ total_cholesterol,0.75)` mg/dL (75th percentile), with the median falling at `r median(combine_df $ total_cholesterol)` mg/dL. It reveals a notable *right-skewed graph*. This skewness is indicative of a pronounced prevalence of participants whose cholesterol levels are concentrated within the range of 130 to 200 mg/dL. 
+The presented data illustrates the distribution of `Total Cholesterol`, spans from a minimum of `r min ( combine_df $ total_cholesterol)` mg/dL to a maximum of `r max ( combine_df $ total_cholesterol)` mg/dL. The interquartile range, which captures the central `r quantile(combine_df $ total_cholesterol,0.50)` of the data, extends from `r quantile(combine_df $ total_cholesterol,0.25)` mg/dL (25th percentile) to `r quantile(combine_df $ total_cholesterol,0.75)` mg/dL (75th percentile), with the median falling at `r median(combine_df $ total_cholesterol)` mg/dL. It reveals a notable **right-skewed graph**. This skewness is indicative of a pronounced prevalence of participants whose cholesterol levels are concentrated within the range of 130 to 200 mg/dL. 
 
-According to [CDC] (https://www.cdc.gov/cholesterol/index.htm), high cholesterol is defined as total cholesterol level greater than 200mg/dL. Therefore, we use this value to categorize into a binary variable, `Total Cholesterol Cat` with 2 levels: "desirable" (at most 200mg/dL) and "above desirable" (higher than 200mg/dL) in the following analysis. 
+According to [CDC](https://www.cdc.gov/cholesterol/index.htm), high cholesterol is defined as total cholesterol level greater than 200mg/dL. Therefore, we use this value to categorize into a binary variable, `Total Cholesterol Cat` with 2 levels: "desirable" (at most 200mg/dL) and "above desirable" (higher than 200mg/dL) in the following analysis. 
 
 ## **Sleep Hours & Total Cholesterol**
 
@@ -161,12 +161,6 @@ combine_tc_binary_Smoker =
     labs (title = "Serum Cotinine Value in Smoker",
           x="Cotinine")
 
-
-```
-
-
-
-```{r message = FALSE, warning = FALSE}
 combine_tc_binary_Nonsmoker =
     combine_tc_binary %>% 
     filter (smoking_status_bi == "Nonsmoker") %>% 
@@ -190,7 +184,7 @@ combine_tc_binary  %>%
   plot_ly (x=~smoking_status_bi, y= ~ Proportion * 100, type = "bar", color = ~total_cholesterol) %>% 
   layout(barmode = "stack",
          title = "Distribution of High Total Cholersterol by Smoker and Nonsmoker",
-         xaxis = list(title = "Smoking status"),
+         xaxis = list(title = "Smoking Status"),
          yaxis = list(title = "Percentage (%)")
          )
 ```
