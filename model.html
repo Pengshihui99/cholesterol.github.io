@@ -13,7 +13,7 @@
 
 <title>Model Building</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
@@ -1977,7 +1977,7 @@ which is the same as model <code>fit_alc</code>.</li>
 ## - cotinine            1    0.0067 258.20 -16421
 ## - age                 1    0.0485 258.24 -16420
 ## &lt;none&gt;                            258.19 -16419
-## - poverty_level       2    0.2075 258.40 -16419
+## - poverty_level       2    0.2075 258.40 -16418
 ## - education_level_20  4    0.6884 258.88 -16412
 ## - marital_status      2    1.2950 259.49 -16396
 ## - race                4    1.5302 259.72 -16395
@@ -2051,7 +2051,7 @@ which is the same as model <code>fit_alc</code>.</li>
 ## - cotinine            1    0.0067 258.20 -16421
 ## - age                 1    0.0485 258.24 -16420
 ## &lt;none&gt;                            258.19 -16419
-## - poverty_level       2    0.2075 258.40 -16419
+## - poverty_level       2    0.2075 258.40 -16418
 ## - education_level_20  4    0.6884 258.88 -16412
 ## - marital_status      2    1.2950 259.49 -16396
 ## - race                4    1.5302 259.72 -16395
@@ -2114,7 +2114,7 @@ fit_phy, fit_alc, and fit_full.</p>
 # create training and testing sets
 cv_df =
   model_cv_df |&gt; 
-  crossv_mc(n = 100) |&gt; 
+  crossv_mc(n = 300) |&gt; 
   mutate(
     train = map(train, as_tibble),
     test = map(test, as_tibble)

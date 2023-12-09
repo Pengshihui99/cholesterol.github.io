@@ -502,7 +502,7 @@ model_cv_df =
 # create training and testing sets
 cv_df =
   model_cv_df |> 
-  crossv_mc(n = 100) |> 
+  crossv_mc(n = 300) |> 
   mutate(
     train = map(train, as_tibble),
     test = map(test, as_tibble)
