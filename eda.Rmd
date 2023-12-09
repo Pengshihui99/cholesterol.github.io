@@ -132,8 +132,9 @@ merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
 merged_total = left_join(merged_2021, merged_2020)
 ```
 
+Firstly, we start with getting a general grasp of the prevalence situation of high cholesterol and 6 factors of health behaviors that have high potential to affect high cholesterol. A U.S. prevalence map to show the geographically distribution of HC in the nation, a health behaviors prevalence boxplot to show the prevalence values' distribution of prevalence of HC and each factors. Then in the purpose of finding most-related factors to put into the modeling process next, we calculate correlation of HC between each factor and show with a table and bar plot.
 
-## Visulization
+## Prevalence Visulization
 
 ### The U.S. High Cholesterol Map 
 This is to have an overview of the prevalence of high cholesterol among the nation.
@@ -225,6 +226,9 @@ box_plot
 
 * Based on the boxplot, we can find that prevalence of high cholesterol was similar between 2020 and 2021. Lacking sleep was the most appreciable health-adverse behavior, followed by lacking physical activities. Binge drinking and smoking problem also existed, while they were not significant compared to other health-adverse behavior. The prevalence of cholesterol screening is high, while the prevalence of lacking health insurance is low. These indicate health-promote behavior.
 
+## Find Top Behaviors
+* We try to find the top factors that affect high cholesterol most in terms of correlation
+
 ### Association Trend Plot 
 This is to observe trendings of associations between prevalence of high cholesterol and prevalence of related health-affecting behaviors.
 ```{r warning=FALSE, warning=FALSE}
@@ -294,8 +298,7 @@ pre_sub_figs
 
 * Based on these trending plots, we can find the prevalence of high cholesterol was (1) positively associated with the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening; and (2) negatively associated with the prevalence of binge drinking.
 
-## Find Top Behaviors
-* We try to find the top factors that affect high cholesterol most in terms of correlation
+
 
 ### Calculate the correlation between each behavior and high cholesterol
 ```{r, message=FALSE, warning=FALSE}
