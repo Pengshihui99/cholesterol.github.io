@@ -41,11 +41,14 @@ For part 2, the resource is from the program [The National Health and Nutrition 
 
 ## **Data Import and Tidy**
 ### *Part 1: PLACES: Local Data for Better Health*
-Firstly, we filter six health-related variables, including binge drinking, currently smoking, no leisure-time physical activity (physical activity), lacking health insurance, cholesterol screening, and sleep less than 7 hours (lacking sleep) and pivot longer for easier reading and better visualization. We calculate state level prevalence by organizing and calculation county level data. We join the [map data frame](https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html) and prevalence dataframe by state abbreviation. we link geographic prevalence data into the USA’s map to show the distribution of cholesterol prevalence across the nation. 
+Firstly, we filter six health-related variables, including `binge drinking`, `currently smoking`, `no leisure-time physical activity (physical activity)`, `lacking health insurance`, `cholesterol screening`, and `sleep less than 7 hours (lacking sleep)`, and pivot longer for easier reading and better visualization. We calculate state level prevalence by organizing and calculation county-level data.
+
+Next, we join the [map data frame](https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html) and prevalence dataframe by state abbreviation. we link geographic prevalence data into the USA’s map to show the distribution of cholesterol prevalence across the nation. 
 
 It is worth nothing that when mapping, we exclude HI and AK for better visualization, as including them will lead to a skewing view of map. FL data is missing in the prevalence data. But we include them into all of our other data analysis process.
 
-Secondly, we first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
+Then, we first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
+
 ```{r, message=FALSE, warning=FALSE}
 
 
