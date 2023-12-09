@@ -7,20 +7,16 @@ output:
     code_folding: hide
 ---
 
-```{r, message=FALSE}
+Load packages and import cleaned dataframes.
+
+```{r, message=FALSE, warning=FALSE}
+
 library(tidyverse)
 library(purrr)
 library(dplyr)
 library(plotly)
 library(tools)
-```
 
-## Data 
-
-### Data Overview
-
-### Data Cleaning
-```{r, message=FALSE, warning=FALSE}
 prevalence_df = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
   janitor::clean_names() |>
   select(year, state_abbr, category, measure, data_value, total_population, category_id, measure_id, short_question_text) |>
@@ -40,10 +36,6 @@ prevalence_chol = prevalence_outcome |>
   select(-disease_popu)
   
   
-```
-
-
-```{r, message=FALSE, warning=FALSE}
 prevalence_risk = prevalence_df |>
   filter(category == "Health Risk Behaviors")
   
@@ -79,10 +71,8 @@ risk_smoking = prevalence_risk |>
   distinct() |>
   mutate(smoking_pre = disease_popu / total_popu) |>
   select(-disease_popu)
-```
 
 
-```{r, message=FALSE, warning=FALSE}
 prevalence_prevention = prevalence_df |>
   filter(category == "Prevention")
 
@@ -105,9 +95,8 @@ prevention_cholscreen = prevalence_prevention |>
   distinct() |>
   mutate(cholscreen_pre = disease_popu / total_popu) |>
   select(-disease_popu)
-```
 
-```{r, message=FALSE, warning=FALSE}
+
 prevalence_df_2020 = read_csv("data/PLACES__Local_Data_for_Better_Health__County_Data_2023_release.csv") |>
   janitor::clean_names() |>
   select(year, state_abbr, category, measure, data_value, total_population, category_id, measure_id, short_question_text) |>
@@ -124,8 +113,6 @@ risk_sleep_2020 = prevalence_df_2020 |>
   mutate(sleep_pre = disease_popu / total_popu) |>
   select(-disease_popu)
 
-#anti_join(risk_sleep,risk_binge, by = 'state_abbr')
-#FL in sleep but not in chol & other dfs
 
 prevalence_chol_2020 = prevalence_df |>
   filter(category == "Health Outcomes") |>
@@ -137,16 +124,14 @@ prevalence_chol_2020 = prevalence_df |>
   distinct() |>
   mutate(chol_pre_2020 = disease_popu / total_popu) |>
   select(-disease_popu)
-```
 
-
-```{r, message=FALSE, warning=FALSE}
 merged_2021 = Reduce(function(df1, df2) left_join(df1, df2, by = c("state_abbr", "total_popu")), list(prevalence_chol, risk_binge, risk_lpa, risk_smoking, prevention_insurance, prevention_cholscreen))
 
 merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
 
 merged_total = left_join(merged_2021, merged_2020)
 ```
+
 
 ## Visulization
 
@@ -172,7 +157,7 @@ geo_df = left_join(states, chol_small_df) |>
 
 map_plot = ggplot(geo_df) +
   geom_sf(aes(fill = chol_pre_2021, text = paste("State: ", NAME, "<br>Prevalence: ", percent(round(chol_pre_2021, digits = 3))))) +
-  scale_fill_distiller("prevalence", palette="YlOrRd") +
+  scale_fill_distiller("Prevalence", palette="YlOrRd") +
   theme_minimal() +
   theme(axis.ticks = element_blank(), axis.text = element_blank()) +
   labs(title = "Prevalence of High Cholesterol by State")
@@ -272,7 +257,7 @@ prevalence_plot
 
 ### Sub-Association Trending Plot
 To have a clearer view of each behavior, let's "zoom in" and observe the trending in more detail.
-```{r}
+```{r, message=FALSE, warning=FALSE}
 fig1 = merged_total |>
   plot_ly() |>
   add_trace(x = ~chol_pre_2021, y = ~binge_pre, type = 'scatter', size = ~total_popu, sizes = c(25, 125), mode = 'markers', opacity = 0.75, name = 'Binge Drinking', showlegend = TRUE, visible = TRUE) |> layout(xaxis = list(tickformat = '.0%'), yaxis = list(tickformat = '.0%'))
@@ -309,7 +294,8 @@ pre_sub_figs
 
 * Based on these trending plots, we can find the prevalence of high cholesterol was (1) positively associated with the prevalence of smoking, lacking physical activity, lacking sleep, lacking health insurance, and cholesterol screening; and (2) negatively associated with the prevalence of binge drinking.
 
-## Top behaviors affecting high cholesterol in terms of correlation
+## Find Top Behaviors
+* We try to find the top factors that affect high cholesterol most in terms of correlation
 
 ### Calculate the correlation between each behavior and high cholesterol
 ```{r, message=FALSE, warning=FALSE}

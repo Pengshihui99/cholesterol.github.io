@@ -26,7 +26,6 @@ shinyApp(
     
     sidebarLayout(
       sidebarPanel(
-        # Input for each x variable
         numericInput("age_input", h3("Enter your age:"), value = 22),
         
         radioButtons(inputId = "gender_choice", 
@@ -72,14 +71,13 @@ shinyApp(
   ),
   
   server = function(input, output) {
-    # Function to make predictions
+   
     make_prediction <- function(alcohol, age, gender, race, marital, education, poverty) {
       new_data <- data.frame(alcohol_use_cat = alcohol, age = age, gender = gender, race = race, marital_status = marital, education_level_20 = education, poverty_level = poverty)  # Create a data frame with user inputs
-      prediction <- predict(my_model, newdata = new_data)  # Make prediction
+      prediction <- predict(my_model, newdata = new_data)  
       return(prediction)
     }
     
-    # React to the button click event
     observeEvent(input$predict_button, {
       age_input <- input$age_input
       gender_input <- input$gender_choice
@@ -92,18 +90,16 @@ shinyApp(
       
       
       
-      # Call the function to make predictions
       prediction_result = make_prediction(alcohol_input, age_input, gender_input, race_input, marital_input, education_input, poverty_input)
       
-      # Display the prediction result
       
       output$prediction_output2 = renderText({
-        # Your prediction result text
+        
         paste("Considering only these factors, you tend to have a total cholesterol level approximately at: ", exp(prediction_result), "mg/dL.")
       })
       
       output$prediction_output = renderText({
-        # Your prediction result text
+        
         paste("Your risk of high cholesterol is: ", case_when(prediction_result > log(200) ~ "Above Normal Level",
                                                               prediction_result <= log(200) ~ "At Normal Level"))
       })
