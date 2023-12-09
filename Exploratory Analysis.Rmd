@@ -12,6 +12,7 @@ Load packages and import datasets.
 library(ggridges)
 library(tidyverse)
 library(plotly)
+library(gridExtra)
 
 combine_df = read_csv("data/combine.csv") 
 
@@ -152,7 +153,8 @@ combine_tc_binary =
   mutate(smoking_status_bi = ifelse(cotinine > 10, "Smoker", "Nonsmoker"),
          smoking_status_bi = factor(smoking_status_bi, levels = c("Nonsmoker","Smoker")))
   
-combine_tc_binary %>% 
+combine_tc_binary_Smoker =
+  combine_tc_binary %>% 
    filter (smoking_status_bi == "Smoker") %>% 
     ggplot (aes(x= cotinine)) +
     geom_density() +
@@ -163,11 +165,14 @@ combine_tc_binary %>%
 The cotinine level is a left-skew line in smokers. 
 
 ```{r message = FALSE, warning = FALSE}
-combine_tc_binary %>% 
+combine_tc_binary_Nonsmoker =
+  combine_tc_binary %>% 
    filter (smoking_status_bi == "Nonsmoker") %>% 
     ggplot (aes(x= cotinine)) +
     geom_density() +
     labs (title = "Serum Cotinine Value in Nonsmoker" )
+
+grid.arrange(combine_tc_binary_Smoker, combine_tc_binary_Nonsmoker, ncol = 2)
 ```
 
 The cotinine level is centered around 0.00 ng/ml in non-smokers. 
