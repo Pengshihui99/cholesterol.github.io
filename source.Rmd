@@ -216,12 +216,9 @@ combine_df %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) %>% 
   kableExtra::scroll_box(width = "100%", height = "300px")
 ```
+<br>
 
-The final dataset for exploratory and statistical analysis contains `r nrow(combine_df)` observations and `r ncol(combine_df)` variables, including information about `r colnames(combine_df)`.
-      
-      
-      
-      
-      
-      
+The final dataset for exploratory and statistical analysis contains **`r nrow(combine_df)`** observations and **`r ncol(combine_df)`** variables, including information about `r colnames(combine_df)`.
+
+
       
