@@ -8,7 +8,7 @@ output:
 ---
 
 ## **Motivation**
-Our project aims to explore the intricate relationship between substance use, other risk factors, and health outcomes, particularly focusing on cholesterol levels. With the growing concern about cardiovascular diseases and their association with lifestyle choices, understanding these relationships is crucial. We intend to use comprehensive datasets to analyze and model these associations, providing insights that could lead to better health outcomes.
+Our project aims to explore the intricate relationship between health affecting behaviors and the health outcome of High cholesterol levels. With the growing concern about cardiovascular diseases and their association with lifestyle choices, understanding these relationships is crucial. We intend to use comprehensive datasets to analyze and model these associations, providing insights that could lead to better health outcomes.
 
 ## **Related Work**
 Our inspiration stems from an introductory article by the American Heart Association (2020) titled "What is Cholesterol?" This article shed light on the profound impact of cholesterol on the human body. Recognizing that daily eating habits and behaviors can contribute to elevated cholesterol levels and pose a risk to cardiovascular health, we aim to develop a website. This platform aims to empower individuals by providing insights into their cholesterol levels, educating them about the associated risks, and encouraging proactive steps to maintain or enhance their overall health.
@@ -16,7 +16,7 @@ Our inspiration stems from an introductory article by the American Heart Associa
 ## **Initial Questions**
 The purposes of this project is to answer the following questions:
 
-- What kind and extent of the correlations between substance use, other risk factors, and our targeted health outcome - cholesterol levels at national level?
+- What kind and extent of the correlations between our targeted health outcome - high cholesterol and health related behaviors at national level?
 - What patterns do their correlation exhibit in the graphs?
 - By using the individual dataset, which models are effective in capturing the association between high cholesterol and a set of health-related behaviors identified in national dataset that exhibit a strong correlation?
 - How can we create a user-friendly tool enabling individuals to evaluate their personal risk of high cholesterol using demographic features and lifestyle choices?
