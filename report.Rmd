@@ -162,7 +162,14 @@ merged_2021 = Reduce(function(df1, df2) left_join(df1, df2, by = c("state_abbr",
 
 merged_2020 = left_join(prevalence_chol_2020, risk_sleep_2020)
 merged_total = left_join(merged_2021, merged_2020)
+
+merged_total |> 
+  knitr::kable(digits = 3) |>
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), font_size = 12) |> 
+  kableExtra::scroll_box(width = "100%", height = "300px")
 ```
+
+Above is the final dataframe `merged_total`, with 51 rows (states) and 9 columns. This will be used as the main dataframe in the following steps of exploratory analysis. 
 
 Firstly, we filter six health-related variables, including `binge drinking`, `currently smoking`, `no leisure-time physical activity (physical activity)`, `lacking health insurance`, `cholesterol screening`, and `sleep less than 7 hours (lacking sleep)`, and pivot longer for easier reading and better visualization. We calculate state level prevalence by organizing and calculation county-level data.
 
@@ -170,7 +177,7 @@ Next, we join the [map data frame](https://www.census.gov/geographies/mapping-fi
 
 It is worth nothing that when mapping, we exclude HI and AK for better visualization, as including them will lead to a skewing view of map. FL data is missing in the prevalence data. But we include them into all of our other data analysis process.
 
-Then, we first show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
+Then, we show the prevalence of high cholesterol and these six health related behavior using boxplot, and then show the trend of these six health related behavior across different cholesterol prevalence. After observing obvious trends separately, we calculate the correlation between high cholesterol and each of these health-related behavior, and then display the results in the format of table and two-direction bar chat for better visualization and understanding.
 
 
 ## *Part 2: [NHANCES](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020)*
